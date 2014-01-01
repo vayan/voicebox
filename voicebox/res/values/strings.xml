@@ -3,6 +3,7 @@
 
     <string name="app_name">VoiceBox</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="statut_recording">Not Recording</string>
+    <string name="button_record">Start Record</string>
 
 </resources>
