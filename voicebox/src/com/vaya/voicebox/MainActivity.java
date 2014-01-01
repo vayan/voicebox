@@ -3,8 +3,11 @@ package com.vaya.voicebox;
 import com.vaya.voicebox.AudioRecorder.LocalBinder;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.Messenger;
+import android.os.RemoteException;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,20 +20,17 @@ import android.view.View;
 
 
 public class MainActivity extends Activity {
-	AudioRecorder mService;
-	Messenger msgService = null;
+	//private AudioRecorder mService;
+	private Messenger msgService = null;
 	boolean mBound = false;
-
+	final Messenger mMessenger = new Messenger(new IncomingHandler());
+	
 	public static final String LOG_TAG = "VoiceBox"; //TAG TO USE FOR ALL DEBUG
 		
 	//Start the record in a new thread from the recording service
 	public void ToggleRecord(View view) { 
 		 Log.d(MainActivity.LOG_TAG, "ToggleRecord() hit");
-		 new Thread(new Runnable() {
-		        public void run() {
-		        	if (mBound) mService.test();
-		        }
-		    }).start(); 
+		 sendMsgServ(AudioRecorder.MSG_START_RECORD);
 	 }
 	
 	
@@ -38,12 +38,21 @@ public class MainActivity extends Activity {
 	private ServiceConnection mConnection  = new ServiceConnection() {
 		 @Override
 		    public void onServiceConnected(ComponentName name, IBinder service) {
-			 	LocalBinder binder = (LocalBinder) service;
-			 	mService  = binder.getService();
+			 	//LocalBinder binder = (LocalBinder) service;
+			 	//mService  = binder.getService();
 			 	mBound = true;
 		    	Log.d(MainActivity.LOG_TAG, "onServiceConnected() called");  	
 		    	msgService = new Messenger(service);
-
+		    	try {
+			    	Message msg = Message.obtain(null,
+			    			AudioRecorder.MSG_REGISTER_CLIENT);
+	                msg.replyTo = mMessenger;
+	                msgService.send(msg);
+	                msg = Message.obtain(null,
+	                		AudioRecorder.MSG_SET_VALUE, this.hashCode(), 0);
+		    	} catch (RemoteException e) {
+			    	Log.e(MainActivity.LOG_TAG, "onServiceConnected() crash : " + e.toString());  	
+                }
 		 }
 		 
 	    @Override
@@ -53,6 +62,34 @@ public class MainActivity extends Activity {
 	    	Log.d(MainActivity.LOG_TAG, "onServiceDisconnected() called");
 	    }
 	};
+	
+	private void sendMsgServ(int msg) {
+		try {
+			msgService.send(Message.obtain(null,
+            		msg, msg, 0));
+        } catch (RemoteException e) {
+        }
+	}
+	
+	class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+        	Log.d(MainActivity.LOG_TAG, "handleMessage Acti : " + msg.toString());
+            switch (msg.what) {
+            case AudioRecorder.MSG_SAY_HELLO:
+            	Log.d(MainActivity.LOG_TAG, "Service say hello");
+            	break;
+            case AudioRecorder.MSG_START_RECORD:
+            	Log.d(MainActivity.LOG_TAG, "Service say it started recording");
+            	break;
+            case AudioRecorder.MSG_STOP_RECORD:
+            	Log.d(MainActivity.LOG_TAG, "Service say it stopped recording");
+            	break;
+            default:
+                super.handleMessage(msg);
+            }
+        }
+    }
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
