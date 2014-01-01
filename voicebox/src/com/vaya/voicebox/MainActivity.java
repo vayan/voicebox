@@ -1,7 +1,5 @@
 package com.vaya.voicebox;
 
-import com.vaya.voicebox.AudioRecorder.LocalBinder;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -17,10 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 
-
-
 public class MainActivity extends Activity {
-	//private AudioRecorder mService;
 	private Messenger msgService = null;
 	boolean mBound = false;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
@@ -38,8 +33,6 @@ public class MainActivity extends Activity {
 	private ServiceConnection mConnection  = new ServiceConnection() {
 		 @Override
 		    public void onServiceConnected(ComponentName name, IBinder service) {
-			 	//LocalBinder binder = (LocalBinder) service;
-			 	//mService  = binder.getService();
 			 	mBound = true;
 		    	Log.d(MainActivity.LOG_TAG, "onServiceConnected() called");  	
 		    	msgService = new Messenger(service);
@@ -63,6 +56,7 @@ public class MainActivity extends Activity {
 	    }
 	};
 	
+	//Wrapper to send message to serv
 	private void sendMsgServ(int msg) {
 		try {
 			msgService.send(Message.obtain(null,
@@ -71,6 +65,7 @@ public class MainActivity extends Activity {
         }
 	}
 	
+	//Handle incoming message from server
 	class IncomingHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -100,7 +95,6 @@ public class MainActivity extends Activity {
 	
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 	}
 	
