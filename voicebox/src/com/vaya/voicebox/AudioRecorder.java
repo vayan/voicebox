@@ -67,16 +67,7 @@ public class AudioRecorder extends IntentService {
         stopSelf();
 	}
 	
-	
-	@Override
-	public IBinder onBind(Intent intent) {
-		Log.d(MainActivity.LOG_TAG, "Service binded");
-		return _Binder;
-	}
-
-
-	@Override
-	protected void onHandleIntent(Intent intent) {
+	public void test() {
 		StartRecord();
 		long endTime = System.currentTimeMillis() + 5*1000;
 	      while (System.currentTimeMillis() < endTime) {
@@ -88,6 +79,19 @@ public class AudioRecorder extends IntentService {
 	          }
 	      }
 	      StopRecord();
+	}
+	
+	
+	@Override
+	public IBinder onBind(Intent intent) {
+		Log.d(MainActivity.LOG_TAG, "Service binded");
+		return _Binder;
+	}
+
+
+	@Override
+	protected void onHandleIntent(Intent intent) {
+		
 	}
 
 }

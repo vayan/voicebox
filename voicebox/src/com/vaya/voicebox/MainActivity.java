@@ -25,7 +25,11 @@ public class MainActivity extends Activity {
 	
 	public void ToggleRecord(View view) {
 		 Log.d(MainActivity.LOG_TAG, "ToggleRecord() hit");
-		 startService(new Intent(MainActivity.this, AudioRecorder.class));
+		 new Thread(new Runnable() {
+		        public void run() {
+		        	if (mBound) mService.test();
+		        }
+		    }).start(); 
 	 }
 	
 	private ServiceConnection mConnection  = new ServiceConnection() {
@@ -36,6 +40,7 @@ public class MainActivity extends Activity {
 			 	mBound = true;
 		    	Log.d(MainActivity.LOG_TAG, "onServiceConnected() called");
 		 }
+		 
 
 	    @Override
 	    public void onServiceDisconnected(ComponentName arg0) {
@@ -71,7 +76,6 @@ public class MainActivity extends Activity {
             unbindService(mConnection);
             mBound = false;
         }
-
 	}
 
 	@Override
