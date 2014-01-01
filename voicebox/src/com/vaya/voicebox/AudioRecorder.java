@@ -5,17 +5,24 @@ import java.io.IOException;
 import android.app.IntentService;
 import android.content.Intent;
 import android.media.MediaRecorder;
+import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 
 public class AudioRecorder extends IntentService {
-	
+	private final IBinder _Binder = new LocalBinder();
 	private MediaRecorder mRecord = null;
 	private String Filename = null;
 	
 	public AudioRecorder() {
 		super("AudioRecorderServiceu");
+	}
+	
+	public class LocalBinder extends Binder {
+	    public AudioRecorder getService() {
+	        return AudioRecorder.this;
+	    }
 	}
 	
 	public void SetFilename(String name) {
@@ -25,7 +32,7 @@ public class AudioRecorder extends IntentService {
 
 
 	private void StartRecord() {
-		SetFilename("testtesttest");
+		SetFilename("testtesttest11");
 		mRecord = new MediaRecorder();
 		mRecord.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecord.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -57,17 +64,14 @@ public class AudioRecorder extends IntentService {
         mRecord.release();
         mRecord = null;
         Log.d(MainActivity.LOG_TAG, "StopRecord() go");
+        stopSelf();
 	}
 	
-
-
-
+	
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
-		 Log.d(MainActivity.LOG_TAG, "Service binded");
-		 
-		return null;
+		Log.d(MainActivity.LOG_TAG, "Service binded");
+		return _Binder;
 	}
 
 
