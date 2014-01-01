@@ -4,6 +4,7 @@ import com.vaya.voicebox.AudioRecorder.LocalBinder;
 
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Messenger;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,13 +18,13 @@ import android.view.View;
 
 public class MainActivity extends Activity {
 	AudioRecorder mService;
+	Messenger msgService = null;
 	boolean mBound = false;
 
-
-	public static final String LOG_TAG = "VoiceBox";
-	
-	
-	public void ToggleRecord(View view) {
+	public static final String LOG_TAG = "VoiceBox"; //TAG TO USE FOR ALL DEBUG
+		
+	//Start the record in a new thread from the recording service
+	public void ToggleRecord(View view) { 
 		 Log.d(MainActivity.LOG_TAG, "ToggleRecord() hit");
 		 new Thread(new Runnable() {
 		        public void run() {
@@ -32,19 +33,23 @@ public class MainActivity extends Activity {
 		    }).start(); 
 	 }
 	
+	
+	//Create connection between activity and the recording service
 	private ServiceConnection mConnection  = new ServiceConnection() {
 		 @Override
 		    public void onServiceConnected(ComponentName name, IBinder service) {
 			 	LocalBinder binder = (LocalBinder) service;
 			 	mService  = binder.getService();
 			 	mBound = true;
-		    	Log.d(MainActivity.LOG_TAG, "onServiceConnected() called");
+		    	Log.d(MainActivity.LOG_TAG, "onServiceConnected() called");  	
+		    	msgService = new Messenger(service);
+
 		 }
 		 
-
 	    @Override
 	    public void onServiceDisconnected(ComponentName arg0) {
 	    	mBound = false;
+	    	msgService = null;
 	    	Log.d(MainActivity.LOG_TAG, "onServiceDisconnected() called");
 	    }
 	};

@@ -7,13 +7,19 @@ import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.Binder;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 import android.util.Log;
 
 public class AudioRecorder extends IntentService {
 	private final IBinder _Binder = new LocalBinder();
 	private MediaRecorder mRecord = null;
 	private String Filename = null;
+	static final int MSG_SAY_HELLO = 1;
+	final Messenger mMessenger = new Messenger(new IncomingHandler());
+
 	
 	public AudioRecorder() {
 		super("AudioRecorderServiceu");
@@ -24,6 +30,25 @@ public class AudioRecorder extends IntentService {
 	        return AudioRecorder.this;
 	    }
 	}
+	
+	class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_SAY_HELLO:
+                    //Toast.makeText(getApplicationContext(), "hello!", Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    super.handleMessage(msg);
+            }
+        }
+    }
+
+	
+	public static void onStartRecord() {
+		
+	}
+	
 	
 	public void SetFilename(String name) {
 		Filename = Environment.getExternalStorageDirectory().getAbsolutePath();
