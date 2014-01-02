@@ -1,5 +1,8 @@
 package com.vaya.voicebox;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -54,12 +57,7 @@ public class MainActivity extends Activity {
             t.setText("Stopped Recording");
 		}
 	}
-	
-	private void updateState() {
 		
-	}
-	
-	
 	//Create connection between activity and the recording service
 	private ServiceConnection mConnection  = new ServiceConnection() {
 		 @Override
@@ -153,7 +151,6 @@ public class MainActivity extends Activity {
 		Intent intent = new Intent(this, AudioRecorder.class);
 		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 		Log.d(MainActivity.LOG_TAG, "Resume MainActivity");   
-		
 		super.onResume();
 	}
 

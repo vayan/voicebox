@@ -1,6 +1,9 @@
 package com.vaya.voicebox;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -17,6 +20,7 @@ import android.util.Log;
 public class AudioRecorder extends IntentService {
 	private MediaRecorder mRecord = null;
 	private String Filename = null;
+	private String Folder = "VoiceBox";
 	private Messenger mClient = null;
 	private boolean recording = false;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
@@ -83,13 +87,26 @@ public class AudioRecorder extends IntentService {
 
 
 	public void SetFilename(String name) { 
+		File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+Folder+"/");
+		dir.mkdir();
+		
 		Filename = Environment.getExternalStorageDirectory().getAbsolutePath();
-		Filename += "/"+name+".3gp";
+		Filename += "/"+Folder+"/"+name+".3gp";
+	}
+	
+
+	private String generateFileName() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd__HH-mm-ss");
+		String currentDateandTime = sdf.format(new Date());
+		
+		Log.d(MainActivity.LOG_TAG, "Date " + currentDateandTime);
+		
+		return currentDateandTime;
 	}
 
 
 	private void StartRecord() {
-		SetFilename("testtesttest11");
+		SetFilename(generateFileName());
 		mRecord = new MediaRecorder();
 		mRecord.setAudioSource(MediaRecorder.AudioSource.MIC);
 		mRecord.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
