@@ -6,5 +6,6 @@
     <string name="statut_recording">Not Recording</string>
     <string name="button_start_record">Start Record</string>
     <string name="button_stop_record">Stop Record</string>
+    <string name="action_filelist">history</string>
 
 </resources>
