@@ -26,126 +26,172 @@ public class MainActivity extends Activity {
 	private Messenger msgService = null;
 	boolean mBound = false;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
+
+	public static final String LOG_TAG = "VoiceBox"; //TAG TO USE FOR ALL DEBUG	
 	
-	public static final String LOG_TAG = "VoiceBox"; //TAG TO USE FOR ALL DEBUG
+	/*
+	 * ******************
+	 * UI Stuff
+	 * ******************
+	 */
 	
-	public MainActivity() {
-		Log.d(MainActivity.LOG_TAG, "Program Started");
-	}
-	
-		
 	public void TouchStartRecord(View view) { 
-		 Log.d(MainActivity.LOG_TAG, "Start Record button hit");
-		 sendMsgServ(AudioRecorder.MSG_START_RECORD);
+		Log.d(MainActivity.LOG_TAG, "Start Record button hit");
+		sendMsgServ(AudioRecorder.MSG_START_RECORD);
 	}
-	
+
 	public void TouchStopRecord(View view) { 
-		 Log.d(MainActivity.LOG_TAG, "Stop Record button hit");
-		 sendMsgServ(AudioRecorder.MSG_STOP_RECORD);
+		Log.d(MainActivity.LOG_TAG, "Stop Record button hit");
+		sendMsgServ(AudioRecorder.MSG_STOP_RECORD);
 	}
-	
+
 	private void toggleUiRecord(boolean recording) {
 		TextView t =(TextView)findViewById(R.id.textView1); 
 		Button btn_srt = (Button)findViewById(R.id.button_start);
 		Button btn_stp = (Button)findViewById(R.id.button_stop);
-		
+
 		btn_srt.setEnabled(!recording);
 		btn_stp.setEnabled(recording);
 		if (recording) {
-			 t.setText("Recording");
+			t.setText("Recording");
 		} else {
-            t.setText("Stopped Recording");
+			t.setText("Stopped Recording");
 		}
 	}
-		
+	
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle presses on the action bar items
+		switch (item.getItemId()) {
+		case R.id.action_settings:
+			OpenSettings();
+			return true;
+		case R.id.action_filelist:
+			OpenFileList();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	private void OpenFileList() {
+		startActivity(new Intent(MainActivity.this, FileListActivity.class));
+	}
+
+	private void OpenSettings() {
+		startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+	}
+
+	
+	
+	/*
+	 * ******************
+	 * Messaging service <-> Activity
+	 * ******************
+	 */
+	
 	//Create connection between activity and the recording service
 	private ServiceConnection mConnection  = new ServiceConnection() {
-		 @Override
-		    public void onServiceConnected(ComponentName name, IBinder service) {
-			 	mBound = true;
-		    	Log.d(MainActivity.LOG_TAG, "onServiceConnected() called");  	
-		    	msgService = new Messenger(service);
-		    	try {
-			    	Message msg = Message.obtain(null,
-			    			AudioRecorder.MSG_REGISTER_CLIENT);
-	                msg.replyTo = mMessenger;
-	                msgService.send(msg);
-	                msg = Message.obtain(null,
-	                		AudioRecorder.MSG_SET_VALUE, this.hashCode(), 0);
-	                sendMsgServ(AudioRecorder.MSG_GET_STATUS);
-		    	} catch (RemoteException e) {
-			    	Log.e(MainActivity.LOG_TAG, "onServiceConnected() crash : " + e.toString());  	
-                }
-		 }
-		 
-	    @Override
-	    public void onServiceDisconnected(ComponentName arg0) {
-	    	mBound = false;
-	    	msgService = null;
-	    	Log.d(MainActivity.LOG_TAG, "onServiceDisconnected() called");
-	    }
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			mBound = true;
+			Log.d(MainActivity.LOG_TAG, "onServiceConnected() called");  	
+			msgService = new Messenger(service);
+			try {
+				Message msg = Message.obtain(null,
+						AudioRecorder.MSG_REGISTER_CLIENT);
+				msg.replyTo = mMessenger;
+				msgService.send(msg);
+				msg = Message.obtain(null,
+						AudioRecorder.MSG_SET_VALUE, this.hashCode(), 0);
+				sendMsgServ(AudioRecorder.MSG_GET_STATUS);
+			} catch (RemoteException e) {
+				Log.e(MainActivity.LOG_TAG, "onServiceConnected() crash : " + e.toString());  	
+			}
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			mBound = false;
+			msgService = null;
+			Log.d(MainActivity.LOG_TAG, "onServiceDisconnected() called");
+		}
 	};
-	
+
 	//Wrapper to send message to serv
 	private void sendMsgServ(int msg) {
 		try {
 			msgService.send(Message.obtain(null,
-            		msg, msg, 0));
-        } catch (RemoteException e) {
-        }
+					msg, msg, 0));
+		} catch (RemoteException e) {
+		}
 	}
-	
+
 	//Handle incoming message from server
 	class IncomingHandler extends Handler {
 
-        @Override
-        public void handleMessage(Message msg) {
-        	Log.d(MainActivity.LOG_TAG, "handleMessage Acti : " + msg.toString());
-            
+		@Override
+		public void handleMessage(Message msg) {
+			Log.d(MainActivity.LOG_TAG, "handleMessage Acti : " + msg.toString());
+
 			switch (msg.what) {
-            case AudioRecorder.MSG_SAY_HELLO:
-            	Log.d(MainActivity.LOG_TAG, "Service say hello");
-            	break;
-            case AudioRecorder.MSG_START_RECORD:
-            	Log.d(MainActivity.LOG_TAG, "Service say it started recording");    
-            	toggleUiRecord(true);
-            	break;
-            case AudioRecorder.MSG_STOP_RECORD:
-            	Log.d(MainActivity.LOG_TAG, "Service say it stopped recording");   
-            	toggleUiRecord(false);
-            	break;
-            default:
-                super.handleMessage(msg);
-            }
-        }
-    }
+			case AudioRecorder.MSG_SAY_HELLO:
+				Log.d(MainActivity.LOG_TAG, "Service say hello");
+				break;
+			case AudioRecorder.MSG_START_RECORD:
+				Log.d(MainActivity.LOG_TAG, "Service say it started recording");    
+				toggleUiRecord(true);
+				break;
+			case AudioRecorder.MSG_STOP_RECORD:
+				Log.d(MainActivity.LOG_TAG, "Service say it stopped recording");   
+				toggleUiRecord(false);
+				break;
+			default:
+				super.handleMessage(msg);
+			}
+		}
+	}
+
+	
+	/*
+	 * ******************
+	 * Activity
+	 * ******************
+	 */
+	
+	public MainActivity() {
+		Log.d(MainActivity.LOG_TAG, "Program Started");
+	}
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-	    
+
 	}
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
 		Log.d(MainActivity.LOG_TAG, "Pause MainActivity"); 
 	}
-	
+
 	@Override
 	protected void onStart() {
 		super.onStart();
+		Log.d(MainActivity.LOG_TAG, "Start MainActivity"); 
 		Intent intent = new Intent(this, AudioRecorder.class);
 		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	}
-	
+
 	@Override
 	protected void onStop() {
 		super.onStop();
 		Log.d(MainActivity.LOG_TAG, "Stop MainActivity"); 
 	}
-	
+
 	@Override
 	protected void onResume() {
 		Intent intent = new Intent(this, AudioRecorder.class);
@@ -156,32 +202,9 @@ public class MainActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		 MenuInflater inflater = getMenuInflater();
-		    inflater.inflate(R.menu.main, menu);
-		    return super.onCreateOptionsMenu(menu);
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle presses on the action bar items
-	    switch (item.getItemId()) {
-	        case R.id.action_settings:
-	            OpenSettings();
-	            return true;
-	        case R.id.action_filelist:
-	            OpenFileList();
-	            return true;
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
-	}
-
-	private void OpenFileList() {
-		startActivity(new Intent(MainActivity.this, FileListActivity.class));
-	}
-
-	private void OpenSettings() {
-        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return super.onCreateOptionsMenu(menu);
 	}
 
 }

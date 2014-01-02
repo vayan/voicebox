@@ -35,10 +35,22 @@ public class AudioRecorder extends IntentService {
 	static final int MSG_STOP_RECORD = 12;
 	static final int MSG_GET_STATUS = 13;
 
-	public AudioRecorder() {
-		super("AudioRecorder");
+	
+	/*
+	 * ******************
+	 * Messaging Service <-> Activity
+	 * ******************
+	 */
+
+
+	@Override
+	public IBinder onBind(Intent intent) {
+		Log.d(MainActivity.LOG_TAG, "Service binded");
+		return mMessenger.getBinder();
 	}
 
+	
+	
 	private void sendMsgClient(int msg) {
 		try {
 			mClient.send(Message.obtain(null,
@@ -74,6 +86,14 @@ public class AudioRecorder extends IntentService {
 		}
 	}
 
+	
+	/*
+	 * ******************
+	 * Audio Recorder
+	 * ******************
+	 */
+
+	
 	public void onStopRecord() {
 		sendMsgClient(MSG_STOP_RECORD);
 		recording = false;
@@ -89,18 +109,18 @@ public class AudioRecorder extends IntentService {
 	public void SetFilename(String name) { 
 		File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+Folder+"/");
 		dir.mkdir();
-		
+
 		Filename = Environment.getExternalStorageDirectory().getAbsolutePath();
 		Filename += "/"+Folder+"/"+name+".3gp";
 	}
-	
+
 
 	private String generateFileName() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd__HH-mm-ss");
 		String currentDateandTime = sdf.format(new Date());
-		
+
 		Log.d(MainActivity.LOG_TAG, "Date " + currentDateandTime);
-		
+
 		return currentDateandTime;
 	}
 
@@ -159,13 +179,17 @@ public class AudioRecorder extends IntentService {
 		}).start(); 
 	}
 
+	
 
-	@Override
-	public IBinder onBind(Intent intent) {
-		Log.d(MainActivity.LOG_TAG, "Service binded");
-		return mMessenger.getBinder();
+	/*
+	 * ******************
+	 * Service
+	 * ******************
+	 */
+	
+	public AudioRecorder() {
+		super("AudioRecorder");
 	}
-
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
