@@ -29,6 +29,7 @@ public class MainActivity extends Activity {
 	public MainActivity() {
 		Log.d(MainActivity.LOG_TAG, "Program Started");
 	}
+	
 		
 	public void TouchStartRecord(View view) { 
 		 Log.d(MainActivity.LOG_TAG, "Start Record button hit");
@@ -54,6 +55,10 @@ public class MainActivity extends Activity {
 		}
 	}
 	
+	private void updateState() {
+		
+	}
+	
 	
 	//Create connection between activity and the recording service
 	private ServiceConnection mConnection  = new ServiceConnection() {
@@ -69,6 +74,7 @@ public class MainActivity extends Activity {
 	                msgService.send(msg);
 	                msg = Message.obtain(null,
 	                		AudioRecorder.MSG_SET_VALUE, this.hashCode(), 0);
+	                sendMsgServ(AudioRecorder.MSG_GET_STATUS);
 		    	} catch (RemoteException e) {
 			    	Log.e(MainActivity.LOG_TAG, "onServiceConnected() crash : " + e.toString());  	
                 }
@@ -126,6 +132,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
+		Log.d(MainActivity.LOG_TAG, "Pause MainActivity"); 
 	}
 	
 	@Override
@@ -138,10 +145,16 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onStop() {
 		super.onStop();
-		if (mBound) {
-            unbindService(mConnection);
-            mBound = false;
-        }
+		Log.d(MainActivity.LOG_TAG, "Stop MainActivity"); 
+	}
+	
+	@Override
+	protected void onResume() {
+		Intent intent = new Intent(this, AudioRecorder.class);
+		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+		Log.d(MainActivity.LOG_TAG, "Resume MainActivity");   
+		
+		super.onResume();
 	}
 
 	@Override

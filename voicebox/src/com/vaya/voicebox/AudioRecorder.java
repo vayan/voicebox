@@ -18,6 +18,7 @@ public class AudioRecorder extends IntentService {
 	private MediaRecorder mRecord = null;
 	private String Filename = null;
 	private Messenger mClient = null;
+	private boolean recording = false;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 
 	/*
@@ -28,6 +29,7 @@ public class AudioRecorder extends IntentService {
 	static final int MSG_SET_VALUE = 3;
 	static final int MSG_START_RECORD = 11;
 	static final int MSG_STOP_RECORD = 12;
+	static final int MSG_GET_STATUS = 13;
 
 	public AudioRecorder() {
 		super("AudioRecorder");
@@ -58,6 +60,10 @@ public class AudioRecorder extends IntentService {
 			case MSG_STOP_RECORD: //Receive stop record command
 				StopRecord();
 				break;
+			case MSG_GET_STATUS: //Receive request status
+				if (recording) sendMsgClient(MSG_START_RECORD);
+				else sendMsgClient(MSG_STOP_RECORD);
+				break;
 			default:
 				super.handleMessage(msg);
 			}
@@ -66,11 +72,13 @@ public class AudioRecorder extends IntentService {
 
 	public void onStopRecord() {
 		sendMsgClient(MSG_STOP_RECORD);
+		recording = false;
 	}
 
 
 	public void onStartRecord() {
 		sendMsgClient(MSG_START_RECORD);
+		recording = true;
 	}
 
 
