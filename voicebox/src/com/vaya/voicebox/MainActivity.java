@@ -3,6 +3,9 @@ package com.vaya.voicebox;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.vaya.voicebox.AudioRecorder.MessageProto;
+
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -26,6 +29,7 @@ public class MainActivity extends Activity {
 	private Messenger msgService = null;
 	boolean mBound = false;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
+	UpdateDuration upd = null;
 
 	public static final String LOG_TAG = "VoiceBox"; //TAG TO USE FOR ALL DEBUG	
 	
@@ -59,6 +63,40 @@ public class MainActivity extends Activity {
 		}
 	}
 	
+	private void updateDuration(long t) {
+		Log.d(MainActivity.LOG_TAG, "Update duration"); 
+		TextView txt =(TextView)findViewById(R.id.text_duration);
+		long t_now = System.currentTimeMillis();
+		long elapse = (t_now - t) / 1000;
+		txt.setText("Duration : " + Long.toString(elapse) + "sec");
+	}
+	
+	
+	private class UpdateDuration extends AsyncTask<Long, Long, Long> {
+		
+		@Override
+		protected Long doInBackground(Long... arg0) {
+			Log.d(MainActivity.LOG_TAG, "Start async task"); 
+			 while (true) {
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					publishProgress(arg0);
+					if (isCancelled()) break;
+	         }
+	         return arg0[0];
+		}
+	     protected void onProgressUpdate(Long... progress) {
+	    	 Log.d(MainActivity.LOG_TAG, "onProgressUpdate task"); 
+	    	 updateDuration(progress[0]);
+	     }
+
+	     protected void onPostExecute(Long result) {
+	    	 Log.d(MainActivity.LOG_TAG, "Stop async task"); 
+	     }
+	 }
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -90,6 +128,7 @@ public class MainActivity extends Activity {
 	 * Messaging service <-> Activity
 	 * ******************
 	 */
+	
 	
 	//Create connection between activity and the recording service
 	private ServiceConnection mConnection  = new ServiceConnection() {
@@ -140,12 +179,20 @@ public class MainActivity extends Activity {
 				Log.d(MainActivity.LOG_TAG, "Service say hello");
 				break;
 			case AudioRecorder.MSG_START_RECORD:
-				Log.d(MainActivity.LOG_TAG, "Service say it started recording");    
+				Log.d(MainActivity.LOG_TAG, "Service say it started recording");
+				sendMsgServ(AudioRecorder.MSG_TIME_START);
 				toggleUiRecord(true);
 				break;
 			case AudioRecorder.MSG_STOP_RECORD:
-				Log.d(MainActivity.LOG_TAG, "Service say it stopped recording");   
+				Log.d(MainActivity.LOG_TAG, "Service say it stopped recording"); 
 				toggleUiRecord(false);
+				if (upd != null) upd.cancel(true);
+				break;
+			case AudioRecorder.MSG_TIME_START:
+				MessageProto val = (MessageProto) msg.obj;
+				Log.d(MainActivity.LOG_TAG, "Service sending time start : "+ Long.toString(val.value));
+				 upd = new UpdateDuration();
+				 upd.execute(val.value, val.value, val.value);
 				break;
 			default:
 				super.handleMessage(msg);

@@ -36,6 +36,7 @@ public class AudioRecorder extends IntentService {
 	static final int MSG_START_RECORD = 11;
 	static final int MSG_STOP_RECORD = 12;
 	static final int MSG_GET_STATUS = 13;
+	static final int MSG_TIME_START = 14;
 
 	
 	/*
@@ -43,6 +44,17 @@ public class AudioRecorder extends IntentService {
 	 * Messaging Service <-> Activity
 	 * ******************
 	 */
+	
+	//object to send to the activity for data
+	public class MessageProto {
+		public int type;
+		public long value;
+		
+		public MessageProto(int t, long v) {
+			type = t;
+			value = v;
+		}
+	}
 
 
 	@Override
@@ -56,6 +68,13 @@ public class AudioRecorder extends IntentService {
 	}
 
 	
+	private void sendObjClient(int msg, long value) {
+		try {
+			mClient.send(Message.obtain(null,
+					msg, new MessageProto(msg, value)));
+		} catch (RemoteException e) {
+		}
+	}
 	
 	private void sendMsgClient(int msg) {
 		try {
@@ -81,6 +100,9 @@ public class AudioRecorder extends IntentService {
 				break;
 			case MSG_STOP_RECORD: //Receive stop record command
 				StopRecord();
+				break;
+			case MSG_TIME_START: //Receive request for time start
+				sendObjClient(MSG_TIME_START, getTimeStartRecord());
 				break;
 			case MSG_GET_STATUS: //Receive request status
 				if (recording) sendMsgClient(MSG_START_RECORD);

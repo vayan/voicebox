@@ -35,4 +35,13 @@
         android:onClick="TouchStopRecord"
         android:text="@string/button_stop_record" />
 
+    <TextView
+        android:id="@+id/text_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button_start"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+     />
+
 </RelativeLayout>
