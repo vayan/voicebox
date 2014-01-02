@@ -6,6 +6,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.app.IntentService;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.Binder;
@@ -15,6 +19,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class AudioRecorder extends IntentService {
@@ -37,7 +42,39 @@ public class AudioRecorder extends IntentService {
 	static final int MSG_STOP_RECORD = 12;
 	static final int MSG_GET_STATUS = 13;
 	static final int MSG_TIME_START = 14;
+	
+	
 
+	/*
+	 * ******************
+	 * Notification
+	 * ******************
+	 */
+	
+	private void notifUser(String Title, String text) {
+  	
+	NotificationCompat.Builder mBuilder =
+	        new NotificationCompat.Builder(this)
+	        .setSmallIcon(R.drawable.ic_launcher)
+	        .setContentTitle(Title)
+	        .setContentText(text);
+	// Creates an explicit intent for an Activity in your app
+	Intent resultIntent = new Intent(this, MainActivity.class);
+
+	TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+	stackBuilder.addParentStack(MainActivity.class);
+	stackBuilder.addNextIntent(resultIntent);
+	PendingIntent resultPendingIntent =
+	        stackBuilder.getPendingIntent(
+	            0,
+	            PendingIntent.FLAG_UPDATE_CURRENT
+	        );
+	mBuilder.setContentIntent(resultPendingIntent);
+	NotificationManager mNotificationManager =
+	    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+	mNotificationManager.notify(11 , mBuilder.build());
+
+	}
 	
 	/*
 	 * ******************
@@ -97,6 +134,7 @@ public class AudioRecorder extends IntentService {
 			case MSG_START_RECORD: //Receive record command
 				//test();
 				StartRecord();
+				
 				break;
 			case MSG_STOP_RECORD: //Receive stop record command
 				StopRecord();
@@ -126,6 +164,8 @@ public class AudioRecorder extends IntentService {
 		sendMsgClient(MSG_STOP_RECORD);
 		recording = false;
 		StartRecord = 0;
+		notifUser("Voice Recording", "You stop recording");
+		stopSelf();
 	}
 
 
@@ -133,6 +173,7 @@ public class AudioRecorder extends IntentService {
 		sendMsgClient(MSG_START_RECORD);
 		recording = true;
 		StartRecord = System.currentTimeMillis();
+		notifUser("Voice Recording", "You are currently recording audio");
 	}
 
 
@@ -188,7 +229,7 @@ public class AudioRecorder extends IntentService {
 		mRecord = null;
 		Log.d(MainActivity.LOG_TAG, "StopRecord()");
 		onStopRecord();
-		stopSelf();
+		//stopSelf();
 	}
 
 	public void test() { //Record test for debug purpose
@@ -224,6 +265,18 @@ public class AudioRecorder extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 
+	}
+	
+	@Override
+	public void onCreate() {
+		Log.d(MainActivity.LOG_TAG, "Service started");
+		super.onCreate();
+	}
+	
+	@Override
+	public void onDestroy() {
+		Log.d(MainActivity.LOG_TAG, "Service dead");
+		super.onDestroy();
 	}
 
 }

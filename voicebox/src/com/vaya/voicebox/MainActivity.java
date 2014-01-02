@@ -1,8 +1,5 @@
 package com.vaya.voicebox;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import com.vaya.voicebox.AudioRecorder.MessageProto;
 
 import android.os.AsyncTask;
@@ -57,14 +54,13 @@ public class MainActivity extends Activity {
 		btn_srt.setEnabled(!recording);
 		btn_stp.setEnabled(recording);
 		if (recording) {
-			t.setText("Recording");
+			t.setText("Status : Recording");
 		} else {
-			t.setText("Stopped Recording");
+			t.setText("Status : Stopped Recording");
 		}
 	}
 	
 	private void updateDuration(long t) {
-		Log.d(MainActivity.LOG_TAG, "Update duration"); 
 		TextView txt =(TextView)findViewById(R.id.text_duration);
 		long t_now = System.currentTimeMillis();
 		long elapse = (t_now - t) / 1000;
@@ -73,13 +69,11 @@ public class MainActivity extends Activity {
 	
 	
 	private class UpdateDuration extends AsyncTask<Long, Long, Long> {
-		
 		@Override
 		protected Long doInBackground(Long... arg0) {
-			Log.d(MainActivity.LOG_TAG, "Start async task"); 
 			 while (true) {
 					try {
-						Thread.sleep(500);
+						Thread.sleep(500); //up if lag 
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -89,12 +83,10 @@ public class MainActivity extends Activity {
 	         return arg0[0];
 		}
 	     protected void onProgressUpdate(Long... progress) {
-	    	 Log.d(MainActivity.LOG_TAG, "onProgressUpdate task"); 
 	    	 updateDuration(progress[0]);
 	     }
 
 	     protected void onPostExecute(Long result) {
-	    	 Log.d(MainActivity.LOG_TAG, "Stop async task"); 
 	     }
 	 }
 
@@ -223,26 +215,31 @@ public class MainActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		Log.d(MainActivity.LOG_TAG, "Pause MainActivity"); 
+		//unbindService(mConnection);
 	}
 
 	@Override
 	protected void onStart() {
 		super.onStart();
 		Log.d(MainActivity.LOG_TAG, "Start MainActivity"); 
-		Intent intent = new Intent(this, AudioRecorder.class);
-		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+	
+			startService(new Intent(this, AudioRecorder.class));
+			bindService(new Intent(this, AudioRecorder.class), mConnection, Context.BIND_AUTO_CREATE);
+
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
+		//unbindService(mConnection);
 		Log.d(MainActivity.LOG_TAG, "Stop MainActivity"); 
 	}
 
 	@Override
 	protected void onResume() {
-		Intent intent = new Intent(this, AudioRecorder.class);
-		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+			startService(new Intent(this, AudioRecorder.class));
+			bindService(new Intent(this, AudioRecorder.class), mConnection, Context.BIND_AUTO_CREATE);
+
 		Log.d(MainActivity.LOG_TAG, "Resume MainActivity");   
 		super.onResume();
 	}
