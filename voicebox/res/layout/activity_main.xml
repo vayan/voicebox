@@ -15,12 +15,24 @@
         android:text="@string/statut_recording" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/button_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView1"
         android:layout_below="@+id/textView1"
         android:layout_marginTop="22dp"
-        android:onClick="ToggleRecord"
-        android:text="@string/button_record" />
+        android:onClick="TouchStartRecord"
+        android:text="@string/button_start_record" />
+
+    <Button
+        android:id="@+id/button_stop"
+        android:enabled="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/button_start"
+        android:layout_alignBottom="@+id/button_start"
+        android:layout_toRightOf="@+id/button_start"
+        android:onClick="TouchStopRecord"
+        android:text="@string/button_stop_record" />
+
 </RelativeLayout>

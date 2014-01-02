@@ -52,7 +52,11 @@ public class AudioRecorder extends IntentService {
 				sendMsgClient(MSG_SAY_HELLO);
 				break;
 			case MSG_START_RECORD: //Receive record command
-				test();
+				//test();
+				StartRecord();
+				break;
+			case MSG_STOP_RECORD: //Receive stop record command
+				StopRecord();
 				break;
 			default:
 				super.handleMessage(msg);
@@ -85,7 +89,7 @@ public class AudioRecorder extends IntentService {
 		mRecord.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 		try {
 			mRecord.prepare();
-			Log.d(MainActivity.LOG_TAG, "StartRecord() go");
+			Log.d(MainActivity.LOG_TAG, "StartRecord()");
 
 		} catch (IOException e) {
 			Log.e(MainActivity.LOG_TAG, "prepare() failed : " + e.getMessage());
@@ -107,7 +111,7 @@ public class AudioRecorder extends IntentService {
 		mRecord.stop();
 		mRecord.release();
 		mRecord = null;
-		Log.d(MainActivity.LOG_TAG, "StopRecord() go");
+		Log.d(MainActivity.LOG_TAG, "StopRecord()");
 		onStopRecord();
 		stopSelf();
 	}

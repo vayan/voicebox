@@ -14,6 +14,8 @@ import android.content.ServiceConnection;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
 	private Messenger msgService = null;
@@ -21,12 +23,34 @@ public class MainActivity extends Activity {
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 	
 	public static final String LOG_TAG = "VoiceBox"; //TAG TO USE FOR ALL DEBUG
+	
+	public MainActivity() {
+		Log.d(MainActivity.LOG_TAG, "Program Started");
+	}
 		
-	//Start the record in a new thread from the recording service
-	public void ToggleRecord(View view) { 
-		 Log.d(MainActivity.LOG_TAG, "ToggleRecord() hit");
+	public void TouchStartRecord(View view) { 
+		 Log.d(MainActivity.LOG_TAG, "Start Record button hit");
 		 sendMsgServ(AudioRecorder.MSG_START_RECORD);
-	 }
+	}
+	
+	public void TouchStopRecord(View view) { 
+		 Log.d(MainActivity.LOG_TAG, "Stop Record button hit");
+		 sendMsgServ(AudioRecorder.MSG_STOP_RECORD);
+	}
+	
+	private void toggleUiRecord(boolean recording) {
+		TextView t =(TextView)findViewById(R.id.textView1); 
+		Button btn_srt = (Button)findViewById(R.id.button_start);
+		Button btn_stp = (Button)findViewById(R.id.button_stop);
+		
+		btn_srt.setEnabled(!recording);
+		btn_stp.setEnabled(recording);
+		if (recording) {
+			 t.setText("Recording");
+		} else {
+            t.setText("Stopped Recording");
+		}
+	}
 	
 	
 	//Create connection between activity and the recording service
@@ -67,18 +91,24 @@ public class MainActivity extends Activity {
 	
 	//Handle incoming message from server
 	class IncomingHandler extends Handler {
+
         @Override
         public void handleMessage(Message msg) {
+        	
+    		
         	Log.d(MainActivity.LOG_TAG, "handleMessage Acti : " + msg.toString());
-            switch (msg.what) {
+            
+			switch (msg.what) {
             case AudioRecorder.MSG_SAY_HELLO:
             	Log.d(MainActivity.LOG_TAG, "Service say hello");
             	break;
             case AudioRecorder.MSG_START_RECORD:
-            	Log.d(MainActivity.LOG_TAG, "Service say it started recording");
+            	Log.d(MainActivity.LOG_TAG, "Service say it started recording");    
+            	toggleUiRecord(true);
             	break;
             case AudioRecorder.MSG_STOP_RECORD:
-            	Log.d(MainActivity.LOG_TAG, "Service say it stopped recording");
+            	Log.d(MainActivity.LOG_TAG, "Service say it stopped recording");   
+            	toggleUiRecord(false);
             	break;
             default:
                 super.handleMessage(msg);
