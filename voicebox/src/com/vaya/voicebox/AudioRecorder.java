@@ -23,11 +23,13 @@ public class AudioRecorder extends IntentService {
 	private String Folder = "VoiceBox";
 	private Messenger mClient = null;
 	private boolean recording = false;
+	private long StartRecord = 0;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 
 	/*
 	 * MSG VALUE FOR PROTOCOL
 	 */
+	
 	static final int MSG_SAY_HELLO = 1; 
 	static final int MSG_REGISTER_CLIENT = 1;
 	static final int MSG_SET_VALUE = 3;
@@ -47,6 +49,10 @@ public class AudioRecorder extends IntentService {
 	public IBinder onBind(Intent intent) {
 		Log.d(MainActivity.LOG_TAG, "Service binded");
 		return mMessenger.getBinder();
+	}
+	
+	public long getTimeStartRecord() {
+		return StartRecord;
 	}
 
 	
@@ -97,12 +103,14 @@ public class AudioRecorder extends IntentService {
 	public void onStopRecord() {
 		sendMsgClient(MSG_STOP_RECORD);
 		recording = false;
+		StartRecord = 0;
 	}
 
 
 	public void onStartRecord() {
 		sendMsgClient(MSG_START_RECORD);
 		recording = true;
+		StartRecord = System.currentTimeMillis();
 	}
 
 
