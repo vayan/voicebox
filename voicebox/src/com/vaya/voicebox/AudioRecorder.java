@@ -12,6 +12,7 @@ import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.location.GpsStatus.NmeaListener;
 import android.media.MediaRecorder;
 import android.os.Binder;
 import android.os.Environment;
@@ -61,11 +62,18 @@ public class AudioRecorder extends Service {
 	 * ******************
 	 */
 	
-	private void notifUser(String Title, String text) {
+	private void CancelAllNotif() {
+		NotificationManager mNotificationManager =
+			    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.cancelAll();
+	}
+	
+	private NotificationManager notifUser(String Title, String text) {
   	
 	NotificationCompat.Builder mBuilder =
 	        new NotificationCompat.Builder(this)
 	        .setSmallIcon(R.drawable.ic_launcher)
+	        .setOngoing(true)
 	        .setContentTitle(Title)
 	        .setContentText(text);
 	// Creates an explicit intent for an Activity in your app
@@ -83,7 +91,7 @@ public class AudioRecorder extends Service {
 	NotificationManager mNotificationManager =
 	    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 	mNotificationManager.notify(11 , mBuilder.build());
-
+	return mNotificationManager;
 	}
 	
 	/*
@@ -174,7 +182,8 @@ public class AudioRecorder extends Service {
 		sendMsgClient(MSG_STOP_RECORD);
 		recording = false;
 		StartRecord = 0;
-		notifUser("Voice Recording", "You stop recording");
+		//notifUser("Voice Recording", "You stop recording");
+		CancelAllNotif();
 		Log.d(MainActivity.LOG_TAG, "onStopRecord()");
 		//stopSelf();
 	}
@@ -272,6 +281,7 @@ public class AudioRecorder extends Service {
 	
 	@Override
 	public void onCreate() {
+		CancelAllNotif();
 		Log.d(MainActivity.LOG_TAG, "Service started");
 		super.onCreate();
 	}
@@ -279,7 +289,13 @@ public class AudioRecorder extends Service {
 	@Override
 	public void onDestroy() {
 		Log.d(MainActivity.LOG_TAG, "Service dead");
+		CancelAllNotif();
 		super.onDestroy();
+	}
+	
+	private void onPause() {
+		// TODO Auto-generated method stub
+
 	}
 	
 	@Override
