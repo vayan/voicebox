@@ -3,8 +3,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        android:layout_width="match_parent"
-        android:title="Set default file name" >
+            android:title="Set default file name">
             
  		<EditTextPreference
                 android:key="default_file_name"
@@ -36,6 +35,5 @@
 	            android:title="File format" />
     </PreferenceCategory>
  
-    
     
 </PreferenceScreen>

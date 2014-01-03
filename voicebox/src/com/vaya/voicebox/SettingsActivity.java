@@ -12,7 +12,7 @@ public class SettingsActivity extends Activity {
 	        super.onCreate(savedInstanceState);
 
 	        // Load the preferences from an XML resource
-	        addPreferencesFromResource(R.xml.preferences);
+	        addPreferencesFromResource(R.xml.settings);
 	    }
 	}
 
