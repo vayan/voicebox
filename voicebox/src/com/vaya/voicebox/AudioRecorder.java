@@ -23,6 +23,15 @@ import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+
+/*
+ * 
+ * TODO : change the way service work, startservice === startrecord, stopservice mean stop record,
+ * better but im lazy
+ * 
+ */
+
+
 public class AudioRecorder extends Service {
 	private MediaRecorder mRecord = null;
 	private String Filename = null;
