@@ -194,6 +194,7 @@ public class MainActivity extends Activity {
 				break;
 			case AudioRecorder.MSG_TIME_START:
 				MessageProto val = (MessageProto) msg.obj;
+				if (upd != null) upd.cancel(true);
 				Log.d(MainActivity.LOG_TAG, "Service sending time start : "+ Long.toString(val.value));
 				upd = new UpdateDuration();
 				upd.execute(val.value, val.value, val.value);
@@ -235,6 +236,7 @@ public class MainActivity extends Activity {
 		super.onStart();
 		Log.d(MainActivity.LOG_TAG, "Start MainActivity"); 
 		startService();
+		sendMsgServ(AudioRecorder.MSG_GET_STATUS);
 	}
 
 	@Override
@@ -243,12 +245,13 @@ public class MainActivity extends Activity {
 		if (upd != null) upd.cancel(true);
 		Log.d(MainActivity.LOG_TAG, "Stop MainActivity"); 
 	}
-
+	
 	@Override
 	protected void onResume() {
 		Log.d(MainActivity.LOG_TAG, "Resume MainActivity");   
 		super.onResume();
 		startService();
+		sendMsgServ(AudioRecorder.MSG_GET_STATUS);
 	}
 
 	@Override
