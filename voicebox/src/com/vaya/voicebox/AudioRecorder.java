@@ -5,16 +5,13 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.location.GpsStatus.NmeaListener;
 import android.media.MediaRecorder;
-import android.os.Binder;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
@@ -24,14 +21,12 @@ import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-
 /*
  * 
  * TODO : change the way service work, startservice === startrecord, stopservice mean stop record,
  * better but im lazy
  * 
  */
-
 
 public class AudioRecorder extends Service {
 	private MediaRecorder mRecord = null;
@@ -48,15 +43,11 @@ public class AudioRecorder extends Service {
 	 * MSG VALUE FOR PROTOCOL
 	 */
 
-	static final int MSG_SAY_HELLO = 1; 
 	static final int MSG_REGISTER_CLIENT = 1;
-	static final int MSG_SET_VALUE = 3;
 	static final int MSG_START_RECORD = 11;
 	static final int MSG_STOP_RECORD = 12;
 	static final int MSG_GET_STATUS = 13;
 	static final int MSG_TIME_START = 14;
-
-
 
 	/*
 	 * ******************
@@ -144,7 +135,6 @@ public class AudioRecorder extends Service {
 			case MSG_REGISTER_CLIENT: //Register the client
 				Log.d(LOG_TAG, "New Client");
 				mClient = msg.replyTo; 
-				sendMsgClient(MSG_SAY_HELLO);
 				break;
 			case MSG_START_RECORD: //Receive record command
 				StartRecord();
@@ -181,7 +171,6 @@ public class AudioRecorder extends Service {
 		Log.d(LOG_TAG, "onStopRecord()");
 	}
 
-
 	public void onStartRecord() {
 		sendMsgClient(MSG_START_RECORD);
 		recording = true;
@@ -189,7 +178,6 @@ public class AudioRecorder extends Service {
 		notifUser("Voice Recording", "You are currently recording audio");
 		Log.d(LOG_TAG, "onStartRecord()");
 	}
-
 
 	public void SetFilename(String name) { 
 		File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+Folder+"/");
@@ -199,7 +187,6 @@ public class AudioRecorder extends Service {
 		Filename += "/"+Folder+"/"+name+".3gp";
 	}
 
-
 	private String generateFileName() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd__HH-mm-ss");
 		String currentDateandTime = sdf.format(new Date());
@@ -207,7 +194,6 @@ public class AudioRecorder extends Service {
 		Log.d(LOG_TAG, "Date " + currentDateandTime);
 		return currentDateandTime;
 	}
-
 
 	private void StartRecord() {
 		SetFilename(generateFileName());
@@ -223,7 +209,6 @@ public class AudioRecorder extends Service {
 		} catch (IOException e) {
 			Log.e(LOG_TAG, "prepare() failed : " + e.getMessage());
 		}
-
 		mRecord.start();
 		onStartRecord();
 	}
@@ -261,7 +246,6 @@ public class AudioRecorder extends Service {
 			}
 		}).start(); 
 	}
-
 
 
 	/*

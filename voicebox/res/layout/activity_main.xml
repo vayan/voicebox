@@ -9,7 +9,7 @@
     tools:context=".MainActivity" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/text_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/statut_recording" />
@@ -18,8 +18,8 @@
         android:id="@+id/button_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView1"
+        android:layout_alignLeft="@+id/text_status"
+        android:layout_below="@+id/text_status"
         android:layout_marginTop="22dp"
         android:onClick="TouchStartRecord"
         android:text="@string/button_start_record" />

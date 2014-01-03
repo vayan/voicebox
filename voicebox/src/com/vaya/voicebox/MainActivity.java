@@ -1,7 +1,10 @@
 package com.vaya.voicebox;
 
-import com.vaya.voicebox.AudioRecorder.MessageProto;
-
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,11 +12,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,9 +20,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.vaya.voicebox.AudioRecorder.MessageProto;
+
 public class MainActivity extends Activity {
 	private Messenger msgService = null;
-	boolean mBound = false;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 	UpdateDuration upd = null;
 
@@ -38,7 +37,6 @@ public class MainActivity extends Activity {
 
 	public void TouchStartRecord(View view) { 
 		Log.d(MainActivity.LOG_TAG, "Start Record button hit");
-		//startService();
 		sendMsgServ(AudioRecorder.MSG_START_RECORD);
 	}
 
@@ -48,17 +46,14 @@ public class MainActivity extends Activity {
 	}
 
 	private void toggleUiRecord(boolean recording) {
-		TextView t =(TextView)findViewById(R.id.textView1); 
+		TextView t =(TextView)findViewById(R.id.text_status); 
 		Button btn_srt = (Button)findViewById(R.id.button_start);
 		Button btn_stp = (Button)findViewById(R.id.button_stop);
 
 		btn_srt.setEnabled(!recording);
 		btn_stp.setEnabled(recording);
-		if (recording) {
-			t.setText("Status : Recording");
-		} else {
-			t.setText("Status : Stopped Recording");
-		}
+		if (recording) t.setText("Status : Recording");
+		else t.setText("Status : Stopped Recording");
 	}
 
 	private void updateDuration(long t) {
@@ -76,6 +71,7 @@ public class MainActivity extends Activity {
 				try {
 					Thread.sleep(500); //up if lag 
 				} catch (InterruptedException e) {
+					Log.e(MainActivity.LOG_TAG, "doInBackground() Sleep failed, " + e.toString());
 					e.printStackTrace();
 				}
 				publishProgress(arg0);
@@ -133,16 +129,12 @@ public class MainActivity extends Activity {
 	private ServiceConnection mConnection  = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			mBound = true;
 			Log.d(MainActivity.LOG_TAG, "onServiceConnected() called");  	
 			msgService = new Messenger(service);
 			try {
-				Message msg = Message.obtain(null,
-						AudioRecorder.MSG_REGISTER_CLIENT);
+				Message msg = Message.obtain(null, AudioRecorder.MSG_REGISTER_CLIENT);
 				msg.replyTo = mMessenger;
 				msgService.send(msg);
-				msg = Message.obtain(null,
-						AudioRecorder.MSG_SET_VALUE, this.hashCode(), 0);
 				sendMsgServ(AudioRecorder.MSG_GET_STATUS);
 			} catch (RemoteException e) {
 				Log.e(MainActivity.LOG_TAG, "onServiceConnected() crash : " + e.toString());  	
@@ -151,7 +143,6 @@ public class MainActivity extends Activity {
 
 		@Override
 		public void onServiceDisconnected(ComponentName arg0) {
-			mBound = false;
 			msgService = null;
 			Log.d(MainActivity.LOG_TAG, "onServiceDisconnected() called");
 		}
@@ -179,9 +170,6 @@ public class MainActivity extends Activity {
 			Log.d(MainActivity.LOG_TAG, "handleMessage Acti : " + msg.toString());
 
 			switch (msg.what) {
-			case AudioRecorder.MSG_SAY_HELLO:
-				Log.d(MainActivity.LOG_TAG, "Service say hello");
-				break;
 			case AudioRecorder.MSG_START_RECORD:
 				Log.d(MainActivity.LOG_TAG, "Service say it started recording");
 				sendMsgServ(AudioRecorder.MSG_TIME_START);
@@ -245,7 +233,7 @@ public class MainActivity extends Activity {
 		if (upd != null) upd.cancel(true);
 		Log.d(MainActivity.LOG_TAG, "Stop MainActivity"); 
 	}
-	
+
 	@Override
 	protected void onResume() {
 		Log.d(MainActivity.LOG_TAG, "Resume MainActivity");   
