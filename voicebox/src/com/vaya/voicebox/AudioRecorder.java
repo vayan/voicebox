@@ -42,10 +42,12 @@ public class AudioRecorder extends Service {
 	private long StartRecord = 0;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 
+	public static final String LOG_TAG = "VoiceBoxService";
+
 	/*
 	 * MSG VALUE FOR PROTOCOL
 	 */
-	
+
 	static final int MSG_SAY_HELLO = 1; 
 	static final int MSG_REGISTER_CLIENT = 1;
 	static final int MSG_SET_VALUE = 3;
@@ -53,58 +55,51 @@ public class AudioRecorder extends Service {
 	static final int MSG_STOP_RECORD = 12;
 	static final int MSG_GET_STATUS = 13;
 	static final int MSG_TIME_START = 14;
-	
-	
+
+
 
 	/*
 	 * ******************
 	 * Notification
 	 * ******************
 	 */
-	
+
 	private void CancelAllNotif() {
 		NotificationManager mNotificationManager =
-			    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		mNotificationManager.cancelAll();
 	}
-	
-	private NotificationManager notifUser(String Title, String text) {
-  	
-	NotificationCompat.Builder mBuilder =
-	        new NotificationCompat.Builder(this)
-	        .setSmallIcon(R.drawable.ic_launcher)
-	        .setOngoing(true)
-	        .setContentTitle(Title)
-	        .setContentText(text);
-	// Creates an explicit intent for an Activity in your app
-	Intent resultIntent = new Intent(this, MainActivity.class);
 
-	TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-	stackBuilder.addParentStack(MainActivity.class);
-	stackBuilder.addNextIntent(resultIntent);
-	PendingIntent resultPendingIntent =
-	        stackBuilder.getPendingIntent(
-	            0,
-	            PendingIntent.FLAG_UPDATE_CURRENT
-	        );
-	mBuilder.setContentIntent(resultPendingIntent);
-	NotificationManager mNotificationManager =
-	    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-	mNotificationManager.notify(11 , mBuilder.build());
-	return mNotificationManager;
+	private NotificationManager notifUser(String Title, String text) {
+
+		NotificationCompat.Builder mBuilder =
+				new NotificationCompat.Builder(this)
+		.setSmallIcon(R.drawable.ic_launcher)
+		.setOngoing(true)
+		.setContentTitle(Title)
+		.setContentText(text);
+		Intent resultIntent = new Intent(this, MainActivity.class);
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+		stackBuilder.addParentStack(MainActivity.class);
+		stackBuilder.addNextIntent(resultIntent);
+		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+		mBuilder.setContentIntent(resultPendingIntent);
+		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.notify(11 , mBuilder.build());
+		return mNotificationManager;
 	}
-	
+
 	/*
 	 * ******************
 	 * Messaging Service <-> Activity
 	 * ******************
 	 */
-	
+
 	//object to send to the activity for data
 	public class MessageProto {
 		public int type;
 		public long value;
-		
+
 		public MessageProto(int t, long v) {
 			type = t;
 			value = v;
@@ -114,45 +109,45 @@ public class AudioRecorder extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		Log.d(MainActivity.LOG_TAG, "Service binded");
+		Log.d(LOG_TAG, "Service binded");
 		return mMessenger.getBinder();
 	}
-	
+
 	public long getTimeStartRecord() {
 		return StartRecord;
 	}
 
-	
+
 	private void sendObjClient(int msg, long value) {
 		try {
 			mClient.send(Message.obtain(null,
 					msg, new MessageProto(msg, value)));
 		} catch (RemoteException e) {
+			Log.e(LOG_TAG, "sendObjClient() : sendObjClient send() failed " + e.toString());
 		}
 	}
-	
+
 	private void sendMsgClient(int msg) {
 		try {
 			mClient.send(Message.obtain(null,
 					msg, msg, 0));
 		} catch (RemoteException e) {
+			Log.e(LOG_TAG, "sendMsgClient() : sendMsgClient send() failed " + e.toString());
 		}
 	}
 
 	class IncomingHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
-			Log.d(MainActivity.LOG_TAG, "handleMessage Service : " + msg.toString());
+			Log.d(LOG_TAG, "handleMessage Service : " + msg.toString());
 			switch (msg.what) {
 			case MSG_REGISTER_CLIENT: //Register the client
-				Log.d(MainActivity.LOG_TAG, "New Client");
+				Log.d(LOG_TAG, "New Client");
 				mClient = msg.replyTo; 
 				sendMsgClient(MSG_SAY_HELLO);
 				break;
 			case MSG_START_RECORD: //Receive record command
-				//test();
 				StartRecord();
-				
 				break;
 			case MSG_STOP_RECORD: //Receive stop record command
 				StopRecord();
@@ -170,22 +165,20 @@ public class AudioRecorder extends Service {
 		}
 	}
 
-	
+
 	/*
 	 * ******************
 	 * Audio Recorder
 	 * ******************
 	 */
 
-	
+
 	public void onStopRecord() {
 		sendMsgClient(MSG_STOP_RECORD);
 		recording = false;
 		StartRecord = 0;
-		//notifUser("Voice Recording", "You stop recording");
 		CancelAllNotif();
-		Log.d(MainActivity.LOG_TAG, "onStopRecord()");
-		//stopSelf();
+		Log.d(LOG_TAG, "onStopRecord()");
 	}
 
 
@@ -194,7 +187,7 @@ public class AudioRecorder extends Service {
 		recording = true;
 		StartRecord = System.currentTimeMillis();
 		notifUser("Voice Recording", "You are currently recording audio");
-		Log.d(MainActivity.LOG_TAG, "onStartRecord()");
+		Log.d(LOG_TAG, "onStartRecord()");
 	}
 
 
@@ -211,8 +204,7 @@ public class AudioRecorder extends Service {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd__HH-mm-ss");
 		String currentDateandTime = sdf.format(new Date());
 
-		Log.d(MainActivity.LOG_TAG, "Date " + currentDateandTime);
-
+		Log.d(LOG_TAG, "Date " + currentDateandTime);
 		return currentDateandTime;
 	}
 
@@ -226,10 +218,10 @@ public class AudioRecorder extends Service {
 		mRecord.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 		try {
 			mRecord.prepare();
-			Log.d(MainActivity.LOG_TAG, "StartRecord()");
+			Log.d(LOG_TAG, "StartRecord()");
 
 		} catch (IOException e) {
-			Log.e(MainActivity.LOG_TAG, "prepare() failed : " + e.getMessage());
+			Log.e(LOG_TAG, "prepare() failed : " + e.getMessage());
 		}
 
 		mRecord.start();
@@ -242,15 +234,14 @@ public class AudioRecorder extends Service {
 
 	private void StopRecord() {
 		if (mRecord == null) {
-			Log.e(MainActivity.LOG_TAG, "StopRecord() failed, no recording");
+			Log.e(LOG_TAG, "StopRecord() failed, no recording");
 			return;
 		}
 		mRecord.stop();
 		mRecord.release();
 		mRecord = null;
-		Log.d(MainActivity.LOG_TAG, "StopRecord()");
+		Log.d(LOG_TAG, "StopRecord()");
 		onStopRecord();
-		//stopSelf();
 	}
 
 	public void test() { //Record test for debug purpose
@@ -271,36 +262,31 @@ public class AudioRecorder extends Service {
 		}).start(); 
 	}
 
-	
+
 
 	/*
 	 * ******************
 	 * Service
 	 * ******************
 	 */
-	
+
 	@Override
 	public void onCreate() {
 		CancelAllNotif();
-		Log.d(MainActivity.LOG_TAG, "Service started");
+		Log.d(LOG_TAG, "Service started");
 		super.onCreate();
 	}
-	
+
 	@Override
 	public void onDestroy() {
-		Log.d(MainActivity.LOG_TAG, "Service dead");
+		Log.d(LOG_TAG, "Service dead");
 		CancelAllNotif();
 		super.onDestroy();
 	}
-	
-	private void onPause() {
-		// TODO Auto-generated method stub
 
-	}
-	
 	@Override
 	public boolean onUnbind(Intent intent) {
-		Log.d(MainActivity.LOG_TAG, "Service unbinded");
+		Log.d(LOG_TAG, "Service unbinded");
 		return super.onUnbind(intent);
 	}
 

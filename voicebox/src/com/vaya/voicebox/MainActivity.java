@@ -28,14 +28,14 @@ public class MainActivity extends Activity {
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 	UpdateDuration upd = null;
 
-	public static final String LOG_TAG = "VoiceBox"; //TAG TO USE FOR ALL DEBUG	
-	
+	public static final String LOG_TAG = "VoiceBox";
+
 	/*
 	 * ******************
 	 * UI Stuff
 	 * ******************
 	 */
-	
+
 	public void TouchStartRecord(View view) { 
 		Log.d(MainActivity.LOG_TAG, "Start Record button hit");
 		//startService();
@@ -60,37 +60,37 @@ public class MainActivity extends Activity {
 			t.setText("Status : Stopped Recording");
 		}
 	}
-	
+
 	private void updateDuration(long t) {
 		TextView txt =(TextView)findViewById(R.id.text_duration);
 		long t_now = System.currentTimeMillis();
 		long elapse = (t_now - t) / 1000;
 		txt.setText("Duration : " + Long.toString(elapse) + "sec");
 	}
-	
-	
+
+
 	private class UpdateDuration extends AsyncTask<Long, Long, Long> {
 		@Override
 		protected Long doInBackground(Long... arg0) {
-			 while (true) {
-					try {
-						Thread.sleep(500); //up if lag 
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					publishProgress(arg0);
-					if (isCancelled()) break;
-	         }
-	         return arg0[0];
+			while (true) {
+				try {
+					Thread.sleep(500); //up if lag 
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				publishProgress(arg0);
+				if (isCancelled()) break;
+			}
+			return arg0[0];
 		}
-	     protected void onProgressUpdate(Long... progress) {
-	    	 updateDuration(progress[0]);
-	     }
+		protected void onProgressUpdate(Long... progress) {
+			updateDuration(progress[0]);
+		}
 
-	     protected void onPostExecute(Long result) {
-	    	 Log.d(MainActivity.LOG_TAG, "onPostExecute() of async time update");
-	     }
-	 }
+		protected void onPostExecute(Long result) {
+			Log.d(MainActivity.LOG_TAG, "onPostExecute() of async time update");
+		}
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -115,20 +115,20 @@ public class MainActivity extends Activity {
 		startActivity(new Intent(MainActivity.this, SettingsActivity.class));
 	}
 
-	
-	
+
+
 	/*
 	 * ******************
 	 * Messaging service <-> Activity
 	 * ******************
 	 */
-	
+
 	private void startService() {
 		startService(new Intent(MainActivity.this, AudioRecorder.class));
 		bindService(new Intent(this, AudioRecorder.class), mConnection, Context.BIND_AUTO_CREATE);
 	}
-	
-	
+
+
 	//Create connection between activity and the recording service
 	private ServiceConnection mConnection  = new ServiceConnection() {
 		@Override
@@ -159,11 +159,15 @@ public class MainActivity extends Activity {
 
 	//Wrapper to send message to serv
 	private void sendMsgServ(int msg) {
-		if (msgService == null) return;
+		if (msgService == null) {
+			Log.e(MainActivity.LOG_TAG, "sendMsgServ() : msgService null");
+			return;
+		}
 		try {
 			msgService.send(Message.obtain(null,
 					msg, msg, 0));
 		} catch (RemoteException e) {
+			Log.e(MainActivity.LOG_TAG, "sendMsgServ() : send failed, " + e.toString());
 		}
 	}
 
@@ -191,8 +195,8 @@ public class MainActivity extends Activity {
 			case AudioRecorder.MSG_TIME_START:
 				MessageProto val = (MessageProto) msg.obj;
 				Log.d(MainActivity.LOG_TAG, "Service sending time start : "+ Long.toString(val.value));
-				 upd = new UpdateDuration();
-				 upd.execute(val.value, val.value, val.value);
+				upd = new UpdateDuration();
+				upd.execute(val.value, val.value, val.value);
 				break;
 			default:
 				super.handleMessage(msg);
@@ -200,13 +204,13 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	
+
 	/*
 	 * ******************
 	 * Activity
 	 * ******************
 	 */
-	
+
 	public MainActivity() {
 		Log.d(MainActivity.LOG_TAG, "Program Started");
 	}
