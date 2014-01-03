@@ -88,6 +88,7 @@ public class MainActivity extends Activity {
 	     }
 
 	     protected void onPostExecute(Long result) {
+	    	 Log.d(MainActivity.LOG_TAG, "onPostExecute() of async time update");
 	     }
 	 }
 
@@ -158,6 +159,7 @@ public class MainActivity extends Activity {
 
 	//Wrapper to send message to serv
 	private void sendMsgServ(int msg) {
+		if (msgService == null) return;
 		try {
 			msgService.send(Message.obtain(null,
 					msg, msg, 0));
@@ -220,6 +222,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
+		if (upd != null) upd.cancel(true);
 		Log.d(MainActivity.LOG_TAG, "Pause MainActivity"); 
 	}
 
@@ -233,6 +236,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onStop() {
 		super.onStop();
+		if (upd != null) upd.cancel(true);
 		Log.d(MainActivity.LOG_TAG, "Stop MainActivity"); 
 	}
 
