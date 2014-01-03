@@ -8,6 +8,7 @@ import java.util.Date;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +23,7 @@ import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-public class AudioRecorder extends IntentService {
+public class AudioRecorder extends Service {
 	private MediaRecorder mRecord = null;
 	private String Filename = null;
 	private String Folder = "VoiceBox";
@@ -165,7 +166,8 @@ public class AudioRecorder extends IntentService {
 		recording = false;
 		StartRecord = 0;
 		notifUser("Voice Recording", "You stop recording");
-		stopSelf();
+		Log.d(MainActivity.LOG_TAG, "onStopRecord()");
+		//stopSelf();
 	}
 
 
@@ -174,6 +176,7 @@ public class AudioRecorder extends IntentService {
 		recording = true;
 		StartRecord = System.currentTimeMillis();
 		notifUser("Voice Recording", "You are currently recording audio");
+		Log.d(MainActivity.LOG_TAG, "onStartRecord()");
 	}
 
 
@@ -258,15 +261,6 @@ public class AudioRecorder extends IntentService {
 	 * ******************
 	 */
 	
-	public AudioRecorder() {
-		super("AudioRecorder");
-	}
-
-	@Override
-	protected void onHandleIntent(Intent intent) {
-
-	}
-	
 	@Override
 	public void onCreate() {
 		Log.d(MainActivity.LOG_TAG, "Service started");
@@ -277,6 +271,12 @@ public class AudioRecorder extends IntentService {
 	public void onDestroy() {
 		Log.d(MainActivity.LOG_TAG, "Service dead");
 		super.onDestroy();
+	}
+	
+	@Override
+	public boolean onUnbind(Intent intent) {
+		Log.d(MainActivity.LOG_TAG, "Service unbinded");
+		return super.onUnbind(intent);
 	}
 
 }

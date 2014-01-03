@@ -38,6 +38,7 @@ public class MainActivity extends Activity {
 	
 	public void TouchStartRecord(View view) { 
 		Log.d(MainActivity.LOG_TAG, "Start Record button hit");
+		//startService();
 		sendMsgServ(AudioRecorder.MSG_START_RECORD);
 	}
 
@@ -120,6 +121,11 @@ public class MainActivity extends Activity {
 	 * Messaging service <-> Activity
 	 * ******************
 	 */
+	
+	private void startService() {
+		startService(new Intent(MainActivity.this, AudioRecorder.class));
+		bindService(new Intent(this, AudioRecorder.class), mConnection, Context.BIND_AUTO_CREATE);
+	}
 	
 	
 	//Create connection between activity and the recording service
@@ -208,40 +214,33 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		startService();
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 		Log.d(MainActivity.LOG_TAG, "Pause MainActivity"); 
-		//unbindService(mConnection);
 	}
 
 	@Override
 	protected void onStart() {
 		super.onStart();
 		Log.d(MainActivity.LOG_TAG, "Start MainActivity"); 
-	
-			startService(new Intent(this, AudioRecorder.class));
-			bindService(new Intent(this, AudioRecorder.class), mConnection, Context.BIND_AUTO_CREATE);
-
+		startService();
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		//unbindService(mConnection);
 		Log.d(MainActivity.LOG_TAG, "Stop MainActivity"); 
 	}
 
 	@Override
 	protected void onResume() {
-			startService(new Intent(this, AudioRecorder.class));
-			bindService(new Intent(this, AudioRecorder.class), mConnection, Context.BIND_AUTO_CREATE);
-
 		Log.d(MainActivity.LOG_TAG, "Resume MainActivity");   
 		super.onResume();
+		startService();
 	}
 
 	@Override
