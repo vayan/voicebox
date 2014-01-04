@@ -5,6 +5,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +14,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,7 +25,7 @@ import android.widget.TextView;
 
 import com.vaya.voicebox.AudioRecorder.MessageProto;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements OnSharedPreferenceChangeListener {
 	private Messenger msgService = null;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 	UpdateDuration upd = null;
@@ -118,6 +121,12 @@ public class MainActivity extends Activity {
 	 * Messaging service <-> Activity
 	 * ******************
 	 */
+		
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {	
+		Log.d(MainActivity.LOG_TAG, "Settings change");  	
+		sendMsgServ(AudioRecorder.MSG_SETTINGS_UPDATED);
+	}
 
 	private void startService() {
 		startService(new Intent(MainActivity.this, AudioRecorder.class));
@@ -216,6 +225,7 @@ public class MainActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		if (upd != null) upd.cancel(true);
+		this.getSharedPreferences("settings", MODE_MULTI_PROCESS).unregisterOnSharedPreferenceChangeListener(this);
 		Log.d(MainActivity.LOG_TAG, "Pause MainActivity"); 
 	}
 
@@ -240,6 +250,7 @@ public class MainActivity extends Activity {
 		super.onResume();
 		startService();
 		sendMsgServ(AudioRecorder.MSG_GET_STATUS);
+		this.getSharedPreferences("settings", 0).registerOnSharedPreferenceChangeListener(this);
 	}
 
 	@Override
