@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import android.R.array;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -35,16 +38,27 @@ public class AudioRecorder extends Service {
 	private MediaRecorder mRecord = null;
 	private String Filename = null;
 	private String Folder = "VoiceBox";
-	private String AudioFormat = null;
+	private Integer AudioFormat = 1;
 	private Messenger mClient = null;
 	private boolean recording = false;
 	private long StartRecord = 0;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 	private OnSharedPreferenceChangeListener listener = null;
 	private SharedPreferences prefs = null; 
-
+	
 	public static final String LOG_TAG = "VoiceBoxService";
 
+	 private static final Map<Integer, String> file_extension;
+	    static
+	    {
+	    	file_extension = new HashMap<Integer, String>();
+	    	file_extension.put(MediaRecorder.OutputFormat.THREE_GPP, "3gp");
+	    	file_extension.put(MediaRecorder.OutputFormat.MPEG_4, "mp4");
+	    	file_extension.put(MediaRecorder.OutputFormat.AAC_ADTS, "aac");
+	    	file_extension.put(MediaRecorder.OutputFormat.AMR_NB, "amr");
+	    }
+	
+	
 	/*
 	 * MSG VALUE FOR PROTOCOL
 	 */
@@ -194,7 +208,7 @@ public class AudioRecorder extends Service {
 		dir.mkdir();
 
 		Filename = Environment.getExternalStorageDirectory().getAbsolutePath();
-		Filename += "/"+Folder+"/"+name+".3gp";
+		Filename += "/"+Folder+"/"+name+"."+file_extension.get(AudioFormat);
 	}
 
 	private String generateFileName() {
@@ -266,8 +280,8 @@ public class AudioRecorder extends Service {
 
 	public void UpdatePref() {
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		AudioFormat = sharedPref.getString("set_format", "");
-		Log.d(LOG_TAG, "Pref Loaded file format is : " + AudioFormat);
+		//AudioFormat = Integer.getInteger(sharedPref.getString("set_format", "1"));
+		//Log.d(LOG_TAG, "Pref Loaded file format is : " + AudioFormat);
 	}
 
 	@Override
@@ -276,6 +290,7 @@ public class AudioRecorder extends Service {
 		CancelAllNotif();
 		Log.d(LOG_TAG, "Service started");
 		
+		//handle preference
 		UpdatePref();
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
