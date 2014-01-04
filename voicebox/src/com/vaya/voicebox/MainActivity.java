@@ -251,6 +251,10 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onStop() {
 		super.onStop();
+	
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);	
+		if (sharedPref.getBoolean("stop_record_quit", false)) sendMsgServ(AudioRecorder.MSG_STOP_RECORD);
+		
 		if (upd != null) upd.cancel(true);
 		Log.d(MainActivity.LOG_TAG, "Stop MainActivity"); 
 	}
