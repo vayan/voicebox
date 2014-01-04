@@ -59,7 +59,7 @@
    		
         <CheckBoxPreference 
             android:key="use_dark_theme"
-            android:summary="Use the ugly dark theme"
+            android:summary="Use the ugly dark theme (require restart)"
             android:title="Use dark theme" 
             android:defaultValue="false"/>
         
