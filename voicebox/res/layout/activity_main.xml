@@ -7,8 +7,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
-   
-    
+
     <TextView
         android:id="@+id/text_status"
         android:layout_width="wrap_content"
@@ -16,41 +15,36 @@
         android:layout_above="@+id/button_start"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="5dp"
-        android:text="@string/statut_recording" 
-      />
+        android:text="@string/statut_recording" />
 
     <ImageButton
         android:id="@+id/button_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="30dp"
+        android:background="@null"
         android:enabled="false"
         android:onClick="TouchStartRecord"
-        android:src="@drawable/record_button"
-        android:layout_height="wrap_content" 
-        android:layout_width="wrap_content"
-        android:layout_centerVertical="true"
-         android:layout_marginLeft="30dp"
-         android:background="@null"
-    	/>
+        android:src="@drawable/record_button" />
 
     <ImageButton
         android:id="@+id/button_stop"
-        android:enabled="false"
-     
-        android:layout_alignBottom="@+id/button_start"
-        android:layout_toRightOf="@+id/button_start"
-        android:src="@drawable/stop_button"
-        android:onClick="TouchStopRecord"
-        android:layout_height="wrap_content" 
         android:layout_width="wrap_content"
-         android:layout_marginLeft="20dp"
-        android:background="@null"/>
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/button_start"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/button_start"
+        android:background="@null"
+        android:enabled="false"
+        android:onClick="TouchStopRecord"
+        android:src="@drawable/stop_button" />
 
     <TextView
         android:id="@+id/text_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/button_start"
-        android:layout_centerHorizontal="true"
-    
-     />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

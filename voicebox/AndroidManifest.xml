@@ -7,8 +7,9 @@
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="19" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:allowBackup="true"
@@ -24,11 +25,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="AudioRecorder"></service>
-        <activity 	android:name="SettingsActivity"
-          		 	android:parentActivityName="MainActivity"  
-            ></activity>
-        <activity android:name="FileListActivity"></activity>
+
+        <service android:name="AudioRecorder" >
+        </service>
+
+        <activity
+            android:name="SettingsActivity"
+            android:parentActivityName="MainActivity" >
+        </activity>
+        <activity android:name="FileListActivity" >
+        </activity>
     </application>
 
 </manifest>

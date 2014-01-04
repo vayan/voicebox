@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.R.array;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -38,24 +37,26 @@ public class AudioRecorder extends Service {
 	private MediaRecorder mRecord = null;
 	private String Filename = null;
 	private String Folder = "VoiceBox";
-	
 	private Messenger mClient = null;
 	private boolean recording = false;
 	private long StartRecord = 0;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
-	 
-	
-	//settings
+	public static final String LOG_TAG = "VoiceBoxService";
+
+	/* =========
+	 * SETTINGS
+	 * =========
+	 */
 	private OnSharedPreferenceChangeListener listener = null;
 	private SharedPreferences prefs = null;
 	private Integer S_AudioFormat = 1;
 	private String  S_Folder = "VoiceBox";
-	private String S_FileName = "VoiceBox";
+	private String 	S_FileName = "VoiceBox";
 
-	public static final String LOG_TAG = "VoiceBoxService";
 
-	/*
-	 * Map for audio filextension 
+	/*==============================
+	 * MAP FOR AUDIO FILE EXTENSION
+	 * =============================
 	 */
 	private static final Map<Integer, String> file_extension;
 	static
@@ -68,8 +69,9 @@ public class AudioRecorder extends Service {
 	}
 
 
-	/*
+	/*========================
 	 * MSG VALUE FOR PROTOCOL
+	 * =======================
 	 */
 	static final int MSG_REGISTER_CLIENT = 1;
 	static final int MSG_START_RECORD = 11;
@@ -78,12 +80,10 @@ public class AudioRecorder extends Service {
 	static final int MSG_TIME_START = 14;
 	static final int MSG_SETTINGS_UPDATED = 15;
 
-	/*
-	 * ******************
-	 * Notification
-	 * ******************
+	/*==============
+	 * NOTIFICATION
+	 *==============
 	 */
-
 	private void CancelAllNotif() {
 		NotificationManager mNotificationManager =
 				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -109,14 +109,11 @@ public class AudioRecorder extends Service {
 		return mNotificationManager;
 	}
 
-	/*
-	 * ******************
-	 * Messaging Service <-> Activity
-	 * ******************
+	/*================================
+	 * MESSAGING SERVICE <-> ACTIVITY
+	 *================================
 	 */
-
-	//object to send to the activity for data
-	public class MessageProto {
+	public class MessageProto { //object to send to the activity for data
 		public int type;
 		public long value;
 
@@ -125,7 +122,6 @@ public class AudioRecorder extends Service {
 			value = v;
 		}
 	}
-
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -183,13 +179,10 @@ public class AudioRecorder extends Service {
 	}
 
 
-	/*
-	 * ******************
-	 * Audio Recorder
-	 * ******************
+	/*================
+	 * AUDIO RECORDER
+	 *================
 	 */
-
-
 	public void onStopRecord() {
 		sendMsgClient(MSG_STOP_RECORD);
 		recording = false;
@@ -275,12 +268,10 @@ public class AudioRecorder extends Service {
 	}
 
 
-	/*
-	 * ******************
-	 * Service
-	 * ******************
+	/*=========
+	 * SERVICE
+	 *=========
 	 */
-
 	public void UpdatePref() {
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 		S_AudioFormat = Integer.parseInt((sharedPref.getString("set_format", "1")));

@@ -1,67 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-        xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <PreferenceCategory
-            android:title="Storage">
-            
- 		<EditTextPreference
-                android:key="default_file_name"
-                android:title="File name"
-                android:summary="Change the audio file name"
-                android:defaultValue="VoiceBox"
-                android:dialogTitle="File name" />
- 		
- 		<EditTextPreference
-                android:key="default_folder"
-                android:title="Folder Location"
-                android:summary="Change where audio files are saved"
-                android:defaultValue="VoiceBox"
-                android:dialogTitle="Folder Location" />
-
+    <PreferenceCategory android:title="Storage" >
+        <EditTextPreference
+            android:defaultValue="VoiceBox"
+            android:dialogTitle="File name"
+            android:key="default_file_name"
+            android:summary="Change the audio file name"
+            android:title="File name" />
+        <EditTextPreference
+            android:defaultValue="VoiceBox"
+            android:dialogTitle="Folder Location"
+            android:key="default_folder"
+            android:summary="Change where audio files are saved"
+            android:title="Folder Location" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="Audio" >
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/type_format"
+            android:entryValues="@array/type_format_value"
+            android:key="set_format"
+            android:summary="Choose your file format"
+            android:title="File format" />
 
-    <PreferenceCategory
-         android:title="Audio">
-        
-   		 <ListPreference
-	            android:key="set_format"
-	            android:entries="@array/type_format"
-	            android:summary="Choose your file format"
-	            android:entryValues="@array/type_format_value"
-	            android:defaultValue="1"
-	            android:title="File format" />
-   		 
-   		 <CheckBoxPreference 
+        <CheckBoxPreference
+            android:defaultValue="false"
             android:key="stop_record_quit"
             android:summary="Stop recording when leaving the application"
-            android:title="Stop on exit" 
-            android:defaultValue="false"/>
-   		    		 	 
-   		<Preference 
+            android:title="Stop on exit" />
+
+        <Preference
+            android:defaultValue="0"
             android:key="set_max_time"
             android:summary="Max record time (in sec) 0 = unlimited"
-            android:title="Max record time" 
-            android:defaultValue="0"/>
-   		
-   		<Preference 
+            android:title="Max record time" />
+        <Preference
+            android:defaultValue="0"
             android:key="set_max_size"
             android:summary="Choose a file size limit (in Mo) 0 = unlimited"
-            android:title="Max file size" 
-            android:defaultValue="0"/>
-   		 
+            android:title="Max file size" />
     </PreferenceCategory>
-    
-    <PreferenceCategory
-            android:title="Misc">
-   		
-        <CheckBoxPreference 
+    <PreferenceCategory android:title="Misc" >
+        <CheckBoxPreference
+            android:defaultValue="false"
             android:key="use_dark_theme"
             android:summary="Use the ugly dark theme (require restart)"
-            android:title="Use dark theme" 
-            android:defaultValue="false"/>
-        
-   	</PreferenceCategory>
- 
-    
+            android:title="Use dark theme" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

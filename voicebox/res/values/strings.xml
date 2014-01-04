@@ -7,13 +7,12 @@
     <string name="button_start_record">Start Record</string>
     <string name="button_stop_record">Stop Record</string>
     <string name="action_filelist">history</string>
-    
+
     <string-array name="type_format">
         <item name="3GPP">3GPP</item>
         <item name="AAC">AAC</item>
         <item name="MP4">MP4</item>
     </string-array>
-    
     <string-array name="type_format_value">
         <item name="3GPP">1</item>
         <item name="AAC">6</item>

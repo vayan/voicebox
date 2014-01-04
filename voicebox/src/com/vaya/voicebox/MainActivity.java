@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,7 +20,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -34,14 +32,17 @@ public class MainActivity extends Activity {
 
 	public static final String LOG_TAG = "VoiceBox";
 
-	/*
-	 * ******************
-	 * UI Stuff
-	 * ******************
+	/*==========
+	 * UI STUFF
+	 *==========
 	 */
+	public void updateTheme() {
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
-	
-	
+		if (sharedPref.getBoolean("use_dark_theme", false)) setTheme(android.R.style.Theme_Holo);
+		else setTheme(android.R.style.Theme_Holo_Light);
+	}
+
 	public void TouchStartRecord(View view) { 
 		Log.d(MainActivity.LOG_TAG, "Start Record button hit");
 		sendMsgServ(AudioRecorder.MSG_START_RECORD);
@@ -78,7 +79,6 @@ public class MainActivity extends Activity {
 		txt.setText("Duration : " + Long.toString(elapse) + "sec");
 	}
 
-
 	private class UpdateDuration extends AsyncTask<Long, Long, Long> {
 		@Override
 		protected Long doInBackground(Long... arg0) {
@@ -97,7 +97,6 @@ public class MainActivity extends Activity {
 		protected void onProgressUpdate(Long... progress) {
 			updateDuration(progress[0]);
 		}
-
 		protected void onPostExecute(Long result) {
 			Log.d(MainActivity.LOG_TAG, "onPostExecute() of async time update");
 		}
@@ -128,17 +127,14 @@ public class MainActivity extends Activity {
 
 
 
-	/*
-	 * ******************
-	 * Messaging service <-> Activity
-	 * ******************
+	/*================================
+	 * MESSAGING SERVICE <-> ACTIVITY
+	 *================================
 	 */
-
 	private void startService() {
 		startService(new Intent(MainActivity.this, AudioRecorder.class));
 		bindService(new Intent(this, AudioRecorder.class), mConnection, Context.BIND_AUTO_CREATE);
 	}
-
 
 	//Create connection between activity and the recording service
 	private ServiceConnection mConnection  = new ServiceConnection() {
@@ -155,7 +151,6 @@ public class MainActivity extends Activity {
 				Log.e(MainActivity.LOG_TAG, "onServiceConnected() crash : " + e.toString());  	
 			}
 		}
-
 		@Override
 		public void onServiceDisconnected(ComponentName arg0) {
 			msgService = null;
@@ -179,7 +174,6 @@ public class MainActivity extends Activity {
 
 	//Handle incoming message from server
 	class IncomingHandler extends Handler {
-
 		@Override
 		public void handleMessage(Message msg) {
 			Log.d(MainActivity.LOG_TAG, "handleMessage Acti : " + msg.toString());
@@ -208,39 +202,28 @@ public class MainActivity extends Activity {
 		}
 	}
 
-
-	/*
-	 * ******************
-	 * Activity
-	 * ******************
+	/*==========
+	 * ACTIVITY
+	 *==========
 	 */
-		
-	public void updateTheme() {
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		
-		if (sharedPref.getBoolean("use_dark_theme", false)) setTheme(android.R.style.Theme_Holo);
-		else setTheme(android.R.style.Theme_Holo_Light);
-	}
-
 	public MainActivity() {
 		Log.d(MainActivity.LOG_TAG, "Program Started");
 	}
 
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		updateTheme();
 		setContentView(R.layout.activity_main);
-		
-		
+
+
 		ActionBar actionBar = getActionBar();
-	    actionBar.setDisplayShowTitleEnabled(false);
-	    actionBar.getThemedContext();
-	    startService();	    
+		actionBar.setDisplayShowTitleEnabled(false);
+		actionBar.getThemedContext();
+		startService();	    
 	}
-		
+
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -259,10 +242,10 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onStop() {
 		super.onStop();
-	
+
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);	
 		if (sharedPref.getBoolean("stop_record_quit", false)) sendMsgServ(AudioRecorder.MSG_STOP_RECORD);
-		
+
 		if (upd != null) upd.cancel(true);
 		Log.d(MainActivity.LOG_TAG, "Stop MainActivity"); 
 	}
@@ -281,5 +264,4 @@ public class MainActivity extends Activity {
 		inflater.inflate(R.menu.main, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
-
 }
