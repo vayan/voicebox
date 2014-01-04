@@ -43,10 +43,11 @@ public class AudioRecorder extends Service {
 	private boolean recording = false;
 	private long StartRecord = 0;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
-	private OnSharedPreferenceChangeListener listener = null;
-	private SharedPreferences prefs = null; 
+	 
 	
 	//settings
+	private OnSharedPreferenceChangeListener listener = null;
+	private SharedPreferences prefs = null;
 	private Integer S_AudioFormat = 1;
 	private String  S_Folder = "VoiceBox";
 	private String S_FileName = "VoiceBox";

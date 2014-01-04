@@ -6,6 +6,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +15,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,8 +29,8 @@ import com.vaya.voicebox.AudioRecorder.MessageProto;
 
 public class MainActivity extends Activity {
 	private Messenger msgService = null;
-	final Messenger mMessenger = new Messenger(new IncomingHandler());
-	UpdateDuration upd = null;
+	private final Messenger mMessenger = new Messenger(new IncomingHandler());
+	private UpdateDuration upd = null;
 
 	public static final String LOG_TAG = "VoiceBox";
 
@@ -203,6 +206,13 @@ public class MainActivity extends Activity {
 	 * Activity
 	 * ******************
 	 */
+		
+	public void updateTheme() {
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		if (sharedPref.getBoolean("use_dark_theme", false)) setTheme(android.R.style.Theme_Holo);
+		else setTheme(android.R.style.Theme_Holo_Light);
+	}
 
 	public MainActivity() {
 		Log.d(MainActivity.LOG_TAG, "Program Started");
@@ -212,18 +222,17 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		updateTheme();
 		setContentView(R.layout.activity_main);
-		//setActivityBackgroundColor(0x000013);
+		
+		
 		ActionBar actionBar = getActionBar();
 	    actionBar.setDisplayShowTitleEnabled(false);
-		startService();
+	    actionBar.getThemedContext();
+	    startService();	    
 	}
-	
-	public void setActivityBackgroundColor(int color) {
-	    View view = this.getWindow().getDecorView();
-	    view.setBackgroundColor(color);
-	}
-	
+		
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -249,7 +258,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onResume() {
 		Log.d(MainActivity.LOG_TAG, "Resume MainActivity");   
-		super.onResume();
+		super.onResume();		
 		startService();
 		sendMsgServ(AudioRecorder.MSG_GET_STATUS);
 	}

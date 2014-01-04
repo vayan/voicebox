@@ -6,11 +6,19 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class SettingsActivity extends Activity  {
 	
 	public static final String LOG_TAG = "VoiceBoxSettings";
+	
+	public void updateTheme() {
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		if (sharedPref.getBoolean("use_dark_theme", false)) setTheme(android.R.style.Theme_Holo);
+		else setTheme(android.R.style.Theme_Holo_Light);
+	}
 	
 	@Override
 	protected void onResume() {
@@ -52,6 +60,7 @@ public class SettingsActivity extends Activity  {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.d(LOG_TAG, "Create activity settings");
+		updateTheme();
 		ActionBar actionBar = getActionBar();
 	    actionBar.setDisplayHomeAsUpEnabled(true);
 	    actionBar.setDisplayShowTitleEnabled(false);
