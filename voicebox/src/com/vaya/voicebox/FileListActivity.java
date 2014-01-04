@@ -29,7 +29,7 @@ public class FileListActivity extends ListActivity {
 	/** Called when the activity is first created. */  
     private List<String> items = null;//存放名称  
     private List<String> paths = null;//存放路径  
-    private String rootPath = "/";  
+    private String rootPath = "/sdcard/VoiceBox/";  
     private TextView tv;  
     
     
@@ -55,7 +55,7 @@ public class FileListActivity extends ListActivity {
   
     public void getFileDir(String filePath) {  
         try{  
-            this.tv.setText("当前路径:"+filePath);// 设置当前所在路径  
+            this.tv.setText("current:"+filePath);// 设置当前所在路径  
             items = new ArrayList<String>();  
             paths = new ArrayList<String>();  
             File f = new File(filePath);  
@@ -91,7 +91,7 @@ public class FileListActivity extends ListActivity {
         super.onListItemClick(l, v, position, id);  
         String path = paths.get(position);  
         File file = new File(path);  
-        //如果是文件夹就继续分解  
+        //
         if(file.isDirectory()){  
             this.getFileDir(path);  
         }else{  
@@ -116,7 +116,7 @@ public class FileListActivity extends ListActivity {
 	 
 	 public String getfile(){
 		 File file = new File("/sdcard/VoiceBox/");
-		 int len = file.list().length - 1;
+		 int len = file.list().length-1;
 		 String lastfile = "";
 		 long time = 0;
 		 for(;len >= 0;len--){
@@ -126,6 +126,6 @@ public class FileListActivity extends ListActivity {
 			 }
 		 }
 		 
-		 return lastfile;
+		 return "/sdcard/VoiceBox/"+lastfile;
 	 }
 }
