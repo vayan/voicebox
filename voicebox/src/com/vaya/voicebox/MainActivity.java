@@ -19,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.vaya.voicebox.AudioRecorder.MessageProto;
@@ -36,6 +37,8 @@ public class MainActivity extends Activity {
 	 * ******************
 	 */
 
+	
+	
 	public void TouchStartRecord(View view) { 
 		Log.d(MainActivity.LOG_TAG, "Start Record button hit");
 		sendMsgServ(AudioRecorder.MSG_START_RECORD);
@@ -48,8 +51,8 @@ public class MainActivity extends Activity {
 
 	private void toggleUiRecord(boolean recording) {
 		TextView t =(TextView)findViewById(R.id.text_status); 
-		Button btn_srt = (Button)findViewById(R.id.button_start);
-		Button btn_stp = (Button)findViewById(R.id.button_stop);
+		ImageButton btn_srt = (ImageButton)findViewById(R.id.button_start);
+		ImageButton btn_stp = (ImageButton)findViewById(R.id.button_stop);
 
 		btn_srt.setEnabled(!recording);
 		btn_stp.setEnabled(recording);
@@ -210,11 +213,17 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		//setActivityBackgroundColor(0x000013);
 		ActionBar actionBar = getActionBar();
 	    actionBar.setDisplayShowTitleEnabled(false);
 		startService();
 	}
-
+	
+	public void setActivityBackgroundColor(int color) {
+	    View view = this.getWindow().getDecorView();
+	    view.setBackgroundColor(color);
+	}
+	
 	@Override
 	protected void onPause() {
 		super.onPause();

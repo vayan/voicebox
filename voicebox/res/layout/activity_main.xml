@@ -6,42 +6,47 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity" >
-
+    tools:context=".MainActivity" 
+     android:background="#2A2A2A">
+   
+    
     <TextView
         android:id="@+id/text_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/statut_recording" />
+        android:text="@string/statut_recording" 
+         android:textColor="#FFFFFF"/>
 
-    <Button
+    <ImageButton
         android:id="@+id/button_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/text_status"
-        android:layout_below="@+id/text_status"
-        android:layout_marginTop="22dp"
+        android:enabled="false"
         android:onClick="TouchStartRecord"
-        android:text="@string/button_start_record" />
+        android:src="@drawable/red_ledon_hi_100px"
+        android:layout_height="100dp" 
+        android:layout_width="100dp"
+        android:layout_centerVertical="true"
+         android:layout_marginLeft="70dp"
+    	/>
 
-    <Button
+    <ImageButton
         android:id="@+id/button_stop"
         android:enabled="false"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/button_start"
         android:layout_alignBottom="@+id/button_start"
         android:layout_toRightOf="@+id/button_start"
+        android:src="@drawable/stop_button_red_hi_100px"
         android:onClick="TouchStopRecord"
-        android:text="@string/button_stop_record" />
-
+        android:layout_height="100dp" 
+        android:layout_width="100dp"/>
+<!--        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" -->
     <TextView
         android:id="@+id/text_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/button_start"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
+        android:textColor="#FFFFFF"
      />
 
 </RelativeLayout>
