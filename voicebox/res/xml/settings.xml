@@ -10,14 +10,14 @@
                 android:title="File name"
                 android:summary="Change the audio file name"
                 android:defaultValue="VoiceBox"
-                android:dialogTitle="dialog_title_edittext_preference" />
+                android:dialogTitle="File name" />
  		
  		<EditTextPreference
                 android:key="default_folder"
                 android:title="Folder Location"
                 android:summary="Change where audio files are saved"
                 android:defaultValue="VoiceBox"
-                android:dialogTitle="dialog_title_edittext_preference2" />
+                android:dialogTitle="Folder Location" />
 
     </PreferenceCategory>
 
@@ -29,7 +29,7 @@
 	            android:entries="@array/type_format"
 	            android:summary="Choose your file format"
 	            android:entryValues="@array/type_format_value"
-	            android:defaultValue="3GPP"
+	            android:defaultValue="1"
 	            android:title="File format" />
    		 <CheckBoxPreference
             android:key="pref_add_limit"
