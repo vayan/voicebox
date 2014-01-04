@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.media.MediaRecorder;
+import android.media.MediaRecorder.OnInfoListener;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
@@ -50,8 +51,11 @@ public class AudioRecorder extends Service {
 	private OnSharedPreferenceChangeListener listener = null;
 	private SharedPreferences prefs = null;
 	private Integer S_AudioFormat = 1;
+	private Integer S_MaxFileSize = 0;
+	private Integer S_MaxTimeRecord = 0;
 	private String  S_Folder = "VoiceBox";
 	private String 	S_FileName = "VoiceBox";
+
 
 
 	/*==============================
@@ -222,6 +226,16 @@ public class AudioRecorder extends Service {
 		return currentDateandTime;
 	}
 
+	private OnInfoListener MediaInfoListener = new OnInfoListener() {
+		@Override
+		public void onInfo(MediaRecorder mr, int what, int extra) {
+			if ((what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) || 
+					(what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED)) {
+				StopRecord();
+			}
+		}
+	} ;
+
 	private void StartRecord() {
 		SetFilename(generateFileName());
 		mRecord = new MediaRecorder();
@@ -229,6 +243,9 @@ public class AudioRecorder extends Service {
 		mRecord.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
 		mRecord.setOutputFile(Filename);
 		mRecord.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+		mRecord.setMaxDuration(S_MaxTimeRecord);
+		mRecord.setMaxFileSize(S_MaxFileSize);
+		mRecord.setOnInfoListener(MediaInfoListener); //listener for max duration settings
 		try {
 			mRecord.prepare();
 			Log.d(LOG_TAG, "StartRecord()");
@@ -247,11 +264,11 @@ public class AudioRecorder extends Service {
 	private void StopRecord() {
 		if (mRecord == null) {
 			Log.e(LOG_TAG, "StopRecord() failed, no recording");
-			return;
+			mRecord = null;
+		} else {
+			mRecord.stop();
+			mRecord.release();
 		}
-		mRecord.stop();
-		mRecord.release();
-		mRecord = null;
 		Log.d(LOG_TAG, "StopRecord()");
 		onStopRecord();
 	}
