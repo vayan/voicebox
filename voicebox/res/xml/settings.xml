@@ -9,6 +9,7 @@
                 android:key="default_file_name"
                 android:title="Default file name"
                 android:summary="edit default file name"
+                android:defaultValue="VoiceBox"
                 android:dialogTitle="dialog_title_edittext_preference" />
 
     </PreferenceCategory>
@@ -20,6 +21,7 @@
                 android:key="default_folder"
                 android:title="Default folder"
                 android:summary="Choose the default folder"
+                android:defaultValue="VoiceBox"
                 android:dialogTitle="dialog_title_edittext_preference2" />
 
     </PreferenceCategory>
@@ -32,6 +34,7 @@
 	            android:entries="@array/type_format"
 	            android:summary="Choose file format"
 	            android:entryValues="@array/type_format_value"
+	            android:defaultValue="3GPP"
 	            android:title="File format" />
     </PreferenceCategory>
  
