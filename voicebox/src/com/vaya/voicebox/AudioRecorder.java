@@ -11,8 +11,6 @@ import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.os.Handler;
@@ -20,7 +18,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -35,7 +32,6 @@ public class AudioRecorder extends Service {
 	private MediaRecorder mRecord = null;
 	private String Filename = null;
 	private String Folder = "VoiceBox";
-	private String AudioFormat = null;
 	private Messenger mClient = null;
 	private boolean recording = false;
 	private long StartRecord = 0;
@@ -52,7 +48,6 @@ public class AudioRecorder extends Service {
 	static final int MSG_STOP_RECORD = 12;
 	static final int MSG_GET_STATUS = 13;
 	static final int MSG_TIME_START = 14;
-	static final int MSG_SETTINGS_UPDATED = 15;
 
 	/*
 	 * ******************
@@ -153,9 +148,6 @@ public class AudioRecorder extends Service {
 			case MSG_GET_STATUS: //Receive request status
 				if (recording) sendMsgClient(MSG_START_RECORD);
 				else sendMsgClient(MSG_STOP_RECORD);
-				break;
-			case MSG_SETTINGS_UPDATED: //Settings are updated
-				UpdatePref();
 				break;
 			default:
 				super.handleMessage(msg);
@@ -261,18 +253,11 @@ public class AudioRecorder extends Service {
 	 * Service
 	 * ******************
 	 */
-	
-	public void UpdatePref() {
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		AudioFormat = sharedPref.getString("set_format", "");
-		Log.d(LOG_TAG, "Pref Loaded file format is : " + AudioFormat);
-	}
 
 	@Override
 	public void onCreate() {
 		CancelAllNotif();
 		Log.d(LOG_TAG, "Service started");
-		UpdatePref();
 		super.onCreate();
 	}
 
@@ -288,4 +273,5 @@ public class AudioRecorder extends Service {
 		Log.d(LOG_TAG, "Service unbinded");
 		return super.onUnbind(intent);
 	}
+
 }
