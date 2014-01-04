@@ -21,7 +21,7 @@
         android:id="@+id/button_start"
         android:enabled="false"
         android:onClick="TouchStartRecord"
-        android:src="@drawable/red_ledon_hi_100px"
+        android:src="@drawable/red_ledon_hi"
         android:layout_height="100dp" 
         android:layout_width="100dp"
         android:layout_centerVertical="true"
@@ -34,7 +34,7 @@
         android:layout_alignBaseline="@+id/button_start"
         android:layout_alignBottom="@+id/button_start"
         android:layout_toRightOf="@+id/button_start"
-        android:src="@drawable/stop_button_red_hi_100px"
+        android:src="@drawable/stop_button"
         android:onClick="TouchStopRecord"
         android:layout_height="100dp" 
         android:layout_width="100dp"/>
