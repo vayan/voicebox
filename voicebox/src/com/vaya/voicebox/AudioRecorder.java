@@ -227,14 +227,17 @@ public class AudioRecorder extends Service {
 	}
 
 	private OnInfoListener MediaInfoListener = new OnInfoListener() {
+		//callback for max duration and max filesize settings
+		
 		@Override
 		public void onInfo(MediaRecorder mr, int what, int extra) {
 			if ((what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) || 
 					(what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED)) {
+				Log.e(LOG_TAG, "Limit reach recording stopped");
 				StopRecord();
 			}
 		}
-	} ;
+	};
 
 	private void StartRecord() {
 		SetFilename(generateFileName());
@@ -245,7 +248,7 @@ public class AudioRecorder extends Service {
 		mRecord.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 		mRecord.setMaxDuration(S_MaxTimeRecord);
 		mRecord.setMaxFileSize(S_MaxFileSize);
-		mRecord.setOnInfoListener(MediaInfoListener); //listener for max duration settings
+		mRecord.setOnInfoListener(MediaInfoListener); 
 		try {
 			mRecord.prepare();
 			Log.d(LOG_TAG, "StartRecord()");
