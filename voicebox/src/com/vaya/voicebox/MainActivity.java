@@ -25,7 +25,7 @@ import android.widget.TextView;
 
 import com.vaya.voicebox.AudioRecorder.MessageProto;
 
-public class MainActivity extends Activity implements OnSharedPreferenceChangeListener {
+public class MainActivity extends Activity {
 	private Messenger msgService = null;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 	UpdateDuration upd = null;
@@ -121,12 +121,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 	 * Messaging service <-> Activity
 	 * ******************
 	 */
-		
-	@Override
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {	
-		Log.d(MainActivity.LOG_TAG, "Settings change");  	
-		sendMsgServ(AudioRecorder.MSG_SETTINGS_UPDATED);
-	}
 
 	private void startService() {
 		startService(new Intent(MainActivity.this, AudioRecorder.class));
@@ -225,7 +219,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 	protected void onPause() {
 		super.onPause();
 		if (upd != null) upd.cancel(true);
-		this.getSharedPreferences("settings", MODE_MULTI_PROCESS).unregisterOnSharedPreferenceChangeListener(this);
 		Log.d(MainActivity.LOG_TAG, "Pause MainActivity"); 
 	}
 
@@ -250,7 +243,6 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 		super.onResume();
 		startService();
 		sendMsgServ(AudioRecorder.MSG_GET_STATUS);
-		this.getSharedPreferences("settings", 0).registerOnSharedPreferenceChangeListener(this);
 	}
 
 	@Override

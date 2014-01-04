@@ -40,6 +40,8 @@ public class AudioRecorder extends Service {
 	private boolean recording = false;
 	private long StartRecord = 0;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
+	private OnSharedPreferenceChangeListener listener = null;
+	private SharedPreferences prefs = null; 
 
 	public static final String LOG_TAG = "VoiceBoxService";
 
@@ -261,7 +263,7 @@ public class AudioRecorder extends Service {
 	 * Service
 	 * ******************
 	 */
-	
+
 	public void UpdatePref() {
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 		AudioFormat = sharedPref.getString("set_format", "");
@@ -270,10 +272,19 @@ public class AudioRecorder extends Service {
 
 	@Override
 	public void onCreate() {
+		super.onCreate();
 		CancelAllNotif();
 		Log.d(LOG_TAG, "Service started");
+		
 		UpdatePref();
-		super.onCreate();
+		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+			public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+				Log.d(LOG_TAG, "Preference changed"); 
+				UpdatePref();
+			}
+		};
+		prefs.registerOnSharedPreferenceChangeListener(listener);		
 	}
 
 	@Override
