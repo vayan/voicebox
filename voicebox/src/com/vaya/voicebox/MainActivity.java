@@ -59,8 +59,16 @@ public class MainActivity extends Activity {
 
 		btn_srt.setEnabled(!recording);
 		btn_stp.setEnabled(recording);
-		if (recording) t.setText("Status : Recording");
-		else t.setText("Status : Stopped Recording");
+		if (recording){ 
+			t.setText("Status : Recording");
+			btn_srt.setImageResource(R.drawable.record_button_dark);
+			btn_stp.setImageResource(R.drawable.stop_button);
+		}
+		else {
+			t.setText("Status : Stopped Recording");
+			btn_srt.setImageResource(R.drawable.record_button);
+			btn_stp.setImageResource(R.drawable.stop_button_dark);
+		}
 	}
 
 	private void updateDuration(long t) {

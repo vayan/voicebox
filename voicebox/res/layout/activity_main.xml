@@ -24,7 +24,8 @@
         android:layout_height="wrap_content" 
         android:layout_width="wrap_content"
         android:layout_centerVertical="true"
-         android:layout_marginLeft="15dp"
+         android:layout_marginLeft="30dp"
+         android:background="@null"
     	/>
 
     <ImageButton
@@ -36,7 +37,9 @@
         android:src="@drawable/stop_button"
         android:onClick="TouchStopRecord"
         android:layout_height="wrap_content" 
-        android:layout_width="wrap_content"/>
+        android:layout_width="wrap_content"
+         android:layout_marginLeft="20dp"
+        android:background="@null"/>
 
     <TextView
         android:id="@+id/text_duration"
