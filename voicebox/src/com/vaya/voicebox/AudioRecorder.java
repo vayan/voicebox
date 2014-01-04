@@ -45,24 +45,26 @@ public class AudioRecorder extends Service {
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 	private OnSharedPreferenceChangeListener listener = null;
 	private SharedPreferences prefs = null; 
-	
+
 	public static final String LOG_TAG = "VoiceBoxService";
 
-	 private static final Map<Integer, String> file_extension;
-	    static
-	    {
-	    	file_extension = new HashMap<Integer, String>();
-	    	file_extension.put(MediaRecorder.OutputFormat.THREE_GPP, "3gp");
-	    	file_extension.put(MediaRecorder.OutputFormat.MPEG_4, "mp4");
-	    	file_extension.put(MediaRecorder.OutputFormat.AAC_ADTS, "aac");
-	    	file_extension.put(MediaRecorder.OutputFormat.AMR_NB, "amr");
-	    }
-	
-	
+	/*
+	 * Map for audio filextension 
+	 */
+	private static final Map<Integer, String> file_extension;
+	static
+	{
+		file_extension = new HashMap<Integer, String>();
+		file_extension.put(MediaRecorder.OutputFormat.THREE_GPP, "3gp");
+		file_extension.put(MediaRecorder.OutputFormat.MPEG_4, "mp4");
+		file_extension.put(MediaRecorder.OutputFormat.AAC_ADTS, "aac");
+		file_extension.put(MediaRecorder.OutputFormat.AMR_NB, "amr");
+	}
+
+
 	/*
 	 * MSG VALUE FOR PROTOCOL
 	 */
-
 	static final int MSG_REGISTER_CLIENT = 1;
 	static final int MSG_START_RECORD = 11;
 	static final int MSG_STOP_RECORD = 12;
@@ -125,11 +127,6 @@ public class AudioRecorder extends Service {
 		return mMessenger.getBinder();
 	}
 
-	public long getTimeStartRecord() {
-		return StartRecord;
-	}
-
-
 	private void sendObjClient(int msg, long value) {
 		try {
 			mClient.send(Message.obtain(null,
@@ -164,7 +161,7 @@ public class AudioRecorder extends Service {
 				StopRecord();
 				break;
 			case MSG_TIME_START: //Receive request for time start
-				sendObjClient(MSG_TIME_START, getTimeStartRecord());
+				sendObjClient(MSG_TIME_START, StartRecord);
 				break;
 			case MSG_GET_STATUS: //Receive request status
 				if (recording) sendMsgClient(MSG_START_RECORD);
@@ -238,7 +235,7 @@ public class AudioRecorder extends Service {
 	}
 
 	private void PauseRecord(){
-
+		//TODO : lazy
 	}
 
 	private void StopRecord() {
@@ -289,7 +286,7 @@ public class AudioRecorder extends Service {
 		super.onCreate();
 		CancelAllNotif();
 		Log.d(LOG_TAG, "Service started");
-		
+
 		//handle preference
 		UpdatePref();
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
