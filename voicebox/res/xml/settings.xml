@@ -3,39 +3,47 @@
         xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-            android:title="Set default file name">
+            android:title="Files">
             
  		<EditTextPreference
                 android:key="default_file_name"
-                android:title="Default file name"
-                android:summary="edit default file name"
+                android:title="File name"
+                android:summary="Change the audio file name"
                 android:defaultValue="VoiceBox"
                 android:dialogTitle="dialog_title_edittext_preference" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
-            android:title="Set default folder">
-
-        <EditTextPreference
+ 		
+ 		<EditTextPreference
                 android:key="default_folder"
-                android:title="Default folder"
-                android:summary="Choose the default folder"
+                android:title="Folder Location"
+                android:summary="Change where audio files are saved"
                 android:defaultValue="VoiceBox"
                 android:dialogTitle="dialog_title_edittext_preference2" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-         android:title="Set format file">
+         android:title="Audio">
         
    		 <ListPreference
 	            android:key="set_format"
 	            android:entries="@array/type_format"
-	            android:summary="Choose file format"
+	            android:summary="Choose your file format"
 	            android:entryValues="@array/type_format_value"
 	            android:defaultValue="3GPP"
 	            android:title="File format" />
+   		 <CheckBoxPreference
+            android:key="pref_add_limit"
+            android:summary="Add time limit to recording"
+            android:title="Add time limit ?"
+            android:defaultValue="false" />
+   		 
+   		<Preference 
+            android:key="set_max_time"
+            android:dependency="pref_add_limit"
+            android:summary="Choose the time in seconds [TODO]"
+            android:title="Choose the time in seconds [TODO]" 
+            android:defaultValue="1"/>
+   		 
     </PreferenceCategory>
  
     

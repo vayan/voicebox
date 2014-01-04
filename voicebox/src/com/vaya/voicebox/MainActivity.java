@@ -1,5 +1,6 @@
 package com.vaya.voicebox;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -209,6 +210,8 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		ActionBar actionBar = getActionBar();
+	    actionBar.setDisplayShowTitleEnabled(false);
 		startService();
 	}
 

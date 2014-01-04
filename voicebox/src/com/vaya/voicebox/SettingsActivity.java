@@ -1,5 +1,6 @@
 package com.vaya.voicebox;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -25,6 +26,7 @@ public class SettingsActivity extends Activity  {
 	    @Override
 	    public void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
+			Log.d(LOG_TAG, "Create frag settings");
 	        addPreferencesFromResource(R.xml.settings);
 	    }
 	    
@@ -49,6 +51,10 @@ public class SettingsActivity extends Activity  {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d(LOG_TAG, "Create activity settings");
+		ActionBar actionBar = getActionBar();
+	    actionBar.setDisplayHomeAsUpEnabled(true);
+	    actionBar.setDisplayShowTitleEnabled(false);
 
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())

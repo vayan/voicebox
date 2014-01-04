@@ -38,13 +38,18 @@ public class AudioRecorder extends Service {
 	private MediaRecorder mRecord = null;
 	private String Filename = null;
 	private String Folder = "VoiceBox";
-	private Integer AudioFormat = 1;
+	
 	private Messenger mClient = null;
 	private boolean recording = false;
 	private long StartRecord = 0;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 	private OnSharedPreferenceChangeListener listener = null;
 	private SharedPreferences prefs = null; 
+	
+	//settings
+	private Integer S_AudioFormat = 1;
+	private String  S_Folder = "VoiceBox";
+	private String S_FileName = "VoiceBox";
 
 	public static final String LOG_TAG = "VoiceBoxService";
 
@@ -205,7 +210,7 @@ public class AudioRecorder extends Service {
 		dir.mkdir();
 
 		Filename = Environment.getExternalStorageDirectory().getAbsolutePath();
-		Filename += "/"+Folder+"/"+name+"."+file_extension.get(AudioFormat);
+		Filename += "/"+Folder+"/"+name+"."+file_extension.get(S_AudioFormat);
 	}
 
 	private String generateFileName() {
@@ -277,8 +282,10 @@ public class AudioRecorder extends Service {
 
 	public void UpdatePref() {
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		//AudioFormat = Integer.getInteger(sharedPref.getString("set_format", "1"));
-		//Log.d(LOG_TAG, "Pref Loaded file format is : " + AudioFormat);
+		S_AudioFormat = Integer.parseInt((sharedPref.getString("set_format", "1")));
+		S_Folder = sharedPref.getString("default_folder", "VoiceBox");
+		S_FileName = sharedPref.getString("default_file_name", "VoiceBox");
+		Log.d(LOG_TAG, "Pref Loaded file format is : " + S_AudioFormat);
 	}
 
 	@Override
