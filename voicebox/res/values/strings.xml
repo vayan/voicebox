@@ -14,9 +14,10 @@
         <item name="MP4">MP4</item>
     </string-array>
     
-    <string-array name="type_format_value">
+    <integer-array name="type_format_value">
         <item name="3GPP">1</item>
         <item name="AAC">6</item>
         <item name="MP4">2</item>
-    </string-array>
+    </integer-array>
+
 </resources>
