@@ -30,30 +30,33 @@ public class MainActivity extends Activity {
 	private final Messenger mMessenger = new Messenger(new IncomingHandler());
 	private UpdateDuration upd = null;
 
-	public static final String LOG_TAG = "VoiceBox";
+	public static final String LOG_TAG = "VoiceBox_Main";
 
 	/*==========
 	 * UI STUFF
 	 *==========
 	 */
-	public void updateTheme() {
+	public void updateTheme() { 
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
 		if (sharedPref.getBoolean("use_dark_theme", false)) setTheme(android.R.style.Theme_Holo);
 		else setTheme(android.R.style.Theme_Holo_Light);
 	}
 
-	public void TouchStartRecord(View view) { 
-		Log.d(MainActivity.LOG_TAG, "Start Record button hit");
+	public void TouchStartRecord(View view) {
+		Log.d(LOG_TAG, "Start Record button hit");
 		sendMsgServ(AudioRecorder.MSG_START_RECORD);
 	}
 
 	public void TouchStopRecord(View view) { 
-		Log.d(MainActivity.LOG_TAG, "Stop Record button hit");
+		Log.d(LOG_TAG, "Stop Record button hit");
 		sendMsgServ(AudioRecorder.MSG_STOP_RECORD);
 	}
 
-	private void toggleUiRecord(boolean recording) {
+
+	private void toggleUiRecord(boolean recording) { 
+		//toggle the ui between record mode and stop
+
 		TextView t =(TextView)findViewById(R.id.text_status); 
 		ImageButton btn_srt = (ImageButton)findViewById(R.id.button_start);
 		ImageButton btn_stp = (ImageButton)findViewById(R.id.button_stop);
@@ -79,14 +82,17 @@ public class MainActivity extends Activity {
 		txt.setText("Duration : " + Long.toString(elapse) + "sec");
 	}
 
-	private class UpdateDuration extends AsyncTask<Long, Long, Long> {
+
+	private class UpdateDuration extends AsyncTask<Long, Long, Long> { 
+		//async task to update the ui showing recording time
+
 		@Override
 		protected Long doInBackground(Long... arg0) {
-			while (true) {
+			while (true) { //just do nothing..
 				try {
 					Thread.sleep(500); //up if lag 
 				} catch (InterruptedException e) {
-					Log.e(MainActivity.LOG_TAG, "doInBackground() Sleep failed, " + e.toString());
+					Log.e(LOG_TAG, "doInBackground() Sleep failed, " + e.toString());
 					e.printStackTrace();
 				}
 				publishProgress(arg0);
@@ -98,13 +104,14 @@ public class MainActivity extends Activity {
 			updateDuration(progress[0]);
 		}
 		protected void onPostExecute(Long result) {
-			Log.d(MainActivity.LOG_TAG, "onPostExecute() of async time update");
+			Log.d(LOG_TAG, "onPostExecute() of async time update");
 		}
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle presses on the action bar items
+
 		switch (item.getItemId()) {
 		case R.id.action_settings:
 			OpenSettings();
@@ -136,8 +143,9 @@ public class MainActivity extends Activity {
 		bindService(new Intent(this, AudioRecorder.class), mConnection, Context.BIND_AUTO_CREATE);
 	}
 
-	//Create connection between activity and the recording service
 	private ServiceConnection mConnection  = new ServiceConnection() {
+		//Create connection between activity and the recording service
+
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			Log.d(MainActivity.LOG_TAG, "onServiceConnected() called");  	
@@ -148,51 +156,53 @@ public class MainActivity extends Activity {
 				msgService.send(msg);
 				sendMsgServ(AudioRecorder.MSG_GET_STATUS);
 			} catch (RemoteException e) {
-				Log.e(MainActivity.LOG_TAG, "onServiceConnected() crash : " + e.toString());  	
+				Log.e(LOG_TAG, "onServiceConnected() crash : " + e.toString());  	
 			}
 		}
 		@Override
 		public void onServiceDisconnected(ComponentName arg0) {
 			msgService = null;
-			Log.d(MainActivity.LOG_TAG, "onServiceDisconnected() called");
+			Log.d(LOG_TAG, "onServiceDisconnected() called");
 		}
 	};
 
-	//Wrapper to send message to serv
+
 	private void sendMsgServ(int msg) {
+		//Wrapper to send message to service
+
 		if (msgService == null) {
-			Log.e(MainActivity.LOG_TAG, "sendMsgServ() : msgService null");
+			Log.e(LOG_TAG, "sendMsgServ() : msgService null");
 			return;
 		}
 		try {
 			msgService.send(Message.obtain(null,
 					msg, msg, 0));
 		} catch (RemoteException e) {
-			Log.e(MainActivity.LOG_TAG, "sendMsgServ() : send failed, " + e.toString());
+			Log.e(LOG_TAG, "sendMsgServ() : send failed, " + e.toString());
 		}
 	}
 
-	//Handle incoming message from server
 	class IncomingHandler extends Handler {
+		//Handle incoming message from service
+
 		@Override
 		public void handleMessage(Message msg) {
-			Log.d(MainActivity.LOG_TAG, "handleMessage Acti : " + msg.toString());
-
+			Log.d(LOG_TAG, "Message incoming : " + msg.toString());
 			switch (msg.what) {
 			case AudioRecorder.MSG_START_RECORD:
-				Log.d(MainActivity.LOG_TAG, "Service say it started recording");
+				Log.d(LOG_TAG, "Service say it started recording");
 				sendMsgServ(AudioRecorder.MSG_TIME_START);
 				toggleUiRecord(true);
 				break;
 			case AudioRecorder.MSG_STOP_RECORD:
-				Log.d(MainActivity.LOG_TAG, "Service say it stopped recording"); 
+				Log.d(LOG_TAG, "Service say it stopped recording"); 
 				toggleUiRecord(false);
 				if (upd != null) upd.cancel(true);
 				break;
 			case AudioRecorder.MSG_TIME_START:
 				MessageProto val = (MessageProto) msg.obj;
+				Log.d(LOG_TAG, "Service sending time start : "+ Long.toString(val.value));
 				if (upd != null) upd.cancel(true);
-				Log.d(MainActivity.LOG_TAG, "Service sending time start : "+ Long.toString(val.value));
 				upd = new UpdateDuration();
 				upd.execute(val.value, val.value, val.value);
 				break;
@@ -207,7 +217,7 @@ public class MainActivity extends Activity {
 	 *==========
 	 */
 	public MainActivity() {
-		Log.d(MainActivity.LOG_TAG, "Program Started");
+		Log.d(LOG_TAG, "Program Started");
 	}
 
 	@Override
@@ -217,42 +227,41 @@ public class MainActivity extends Activity {
 		updateTheme();
 		setContentView(R.layout.activity_main);
 
-
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowTitleEnabled(false);
-		actionBar.getThemedContext();
-		startService();	    
+		startService(); //create or rebind if already created   
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (upd != null) upd.cancel(true);
-		Log.d(MainActivity.LOG_TAG, "Pause MainActivity"); 
+		if (upd != null) upd.cancel(true); //kill the async task
+		Log.d(LOG_TAG, "Pause MainActivity"); 
 	}
 
 	@Override
 	protected void onStart() {
 		super.onStart();
-		Log.d(MainActivity.LOG_TAG, "Start MainActivity"); 
+		Log.d(LOG_TAG, "Start MainActivity"); 
 		startService();
-		sendMsgServ(AudioRecorder.MSG_GET_STATUS);
+		sendMsgServ(AudioRecorder.MSG_GET_STATUS); //get recording data from service
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
 
+		//if set to true stopped recording when app quit
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);	
 		if (sharedPref.getBoolean("stop_record_quit", false)) sendMsgServ(AudioRecorder.MSG_STOP_RECORD);
 
 		if (upd != null) upd.cancel(true);
-		Log.d(MainActivity.LOG_TAG, "Stop MainActivity"); 
+		Log.d(LOG_TAG, "Stop MainActivity"); 
 	}
 
 	@Override
 	protected void onResume() {
-		Log.d(MainActivity.LOG_TAG, "Resume MainActivity");   
+		Log.d(LOG_TAG, "Resume MainActivity");   
 		super.onResume();		
 		startService();
 		sendMsgServ(AudioRecorder.MSG_GET_STATUS);

@@ -41,7 +41,7 @@ public class AudioRecorder extends Service {
 	private boolean recording = false;
 	private long StartRecord = 0;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
-	public static final String LOG_TAG = "VoiceBoxService";
+	public static final String LOG_TAG = "VoiceBox_Service";
 
 	/* =========
 	 * SETTINGS
@@ -59,8 +59,7 @@ public class AudioRecorder extends Service {
 	 * =============================
 	 */
 	private static final Map<Integer, String> file_extension;
-	static
-	{
+	static {
 		file_extension = new HashMap<Integer, String>();
 		file_extension.put(MediaRecorder.OutputFormat.THREE_GPP, "3gp");
 		file_extension.put(MediaRecorder.OutputFormat.MPEG_4, "mp4");
@@ -91,6 +90,7 @@ public class AudioRecorder extends Service {
 	}
 
 	private NotificationManager notifUser(String Title, String text) {
+		//create permanent notification
 
 		NotificationCompat.Builder mBuilder =
 				new NotificationCompat.Builder(this)
@@ -130,6 +130,8 @@ public class AudioRecorder extends Service {
 	}
 
 	private void sendObjClient(int msg, long value) {
+		//send a MessageProto to activity
+
 		try {
 			mClient.send(Message.obtain(null,
 					msg, new MessageProto(msg, value)));
@@ -139,6 +141,8 @@ public class AudioRecorder extends Service {
 	}
 
 	private void sendMsgClient(int msg) {
+		//send an int to client
+
 		try {
 			mClient.send(Message.obtain(null,
 					msg, msg, 0));
@@ -148,6 +152,8 @@ public class AudioRecorder extends Service {
 	}
 
 	class IncomingHandler extends Handler {
+		//handle incoming message from activity
+
 		@Override
 		public void handleMessage(Message msg) {
 			Log.d(LOG_TAG, "handleMessage Service : " + msg.toString());
@@ -201,13 +207,14 @@ public class AudioRecorder extends Service {
 
 	public void SetFilename(String name) { 
 		File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+Folder+"/");
-		dir.mkdir();
+		dir.mkdir(); //create directory if doesn't exist
 
 		Filename = Environment.getExternalStorageDirectory().getAbsolutePath();
 		Filename += "/"+Folder+"/"+name+"."+file_extension.get(S_AudioFormat);
 	}
 
 	private String generateFileName() {
+		//TODO : Implement settings filename
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd__HH-mm-ss");
 		String currentDateandTime = sdf.format(new Date());
 
@@ -249,30 +256,12 @@ public class AudioRecorder extends Service {
 		onStopRecord();
 	}
 
-	public void test() { //Record test for debug purpose
-		new Thread(new Runnable() {
-			public void run() {
-				StartRecord();
-				long endTime = System.currentTimeMillis() + 5*1000;
-				while (System.currentTimeMillis() < endTime) {
-					synchronized (this) {
-						try {
-							wait(endTime - System.currentTimeMillis());
-						} catch (Exception e) {
-						}
-					}
-				}
-				StopRecord();
-			}
-		}).start(); 
-	}
-
-
 	/*=========
 	 * SERVICE
 	 *=========
 	 */
 	public void UpdatePref() {
+		//get latest settings from the xml config file
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 		S_AudioFormat = Integer.parseInt((sharedPref.getString("set_format", "1")));
 		S_Folder = sharedPref.getString("default_folder", "VoiceBox");
