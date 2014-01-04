@@ -3,11 +3,15 @@ package com.vaya.voicebox;
 import java.io.File;  
 import java.util.ArrayList;  
 import java.util.List;  
+
+import com.vaya.voicebox.ShakeInterface.OnShakeListener;
   
 import android.app.AlertDialog;  
 import android.app.ListActivity;  
+import android.content.Context;
 import android.content.DialogInterface;  
 import android.os.Bundle;  
+import android.util.Log;
 import android.view.View;  
 import android.widget.ArrayAdapter;  
 import android.widget.ListView;  
@@ -16,11 +20,28 @@ import android.widget.TextView;
 public class FileListActivity extends ListActivity {
 	
 	
+	private String TAG = "FileListActivity";
+	ShakeInterface shake;
+	MySensorEventListener mySensorEventListener = new MySensorEventListener();
+	Context context;
+	
+	
 	/** Called when the activity is first created. */  
     private List<String> items = null;//存放名称  
     private List<String> paths = null;//存放路径  
     private String rootPath = "/";  
     private TextView tv;  
+    
+    
+	private class MySensorEventListener implements OnShakeListener{
+
+		@Override
+		public void onShake() {
+			// TODO Auto-generated method stub
+			Log.d(TAG, getfile());
+		}
+		
+	};
   
     @Override  
     public void onCreate(Bundle savedInstanceState) {  
@@ -28,6 +49,8 @@ public class FileListActivity extends ListActivity {
         setContentView(R.layout.activity_filelist);  
         tv = (TextView) this.findViewById(R.id.TextView);  
         this.getFileDir(rootPath);//获取rootPath目录下的文件.  
+        
+        shake_phone(this);
     }  
   
     public void getFileDir(String filePath) {  
@@ -46,7 +69,7 @@ public class FileListActivity extends ListActivity {
             }  
             // 将所有文件存入list中  
             if(files != null){  
-                int count = files.length;// 文件个数  
+                int count = files.length;
                 for (int i = 0; i < count; i++) {  
                     File file = files[i];  
                     items.add(file.getName());  
@@ -80,5 +103,29 @@ public class FileListActivity extends ListActivity {
                   
             }).show();  
         }  
-    }  
+    }
+    
+	public void shake_phone(Context context){
+		//System.out.println("haha\n");
+		this.context = context;
+		shake = new ShakeInterface(context);
+		shake.registerOnShakeListener(mySensorEventListener);
+		shake.start();
+	}
+	
+	 
+	 public String getfile(){
+		 File file = new File("/sdcard/VoiceBox/");
+		 int len = file.list().length - 1;
+		 String lastfile = "";
+		 long time = 0;
+		 for(;len >= 0;len--){
+			 if(time < file.listFiles()[len].lastModified()){
+				 time = file.listFiles()[len].lastModified();
+				 lastfile = file.list()[len];
+			 }
+		 }
+		 
+		 return lastfile;
+	 }
 }
