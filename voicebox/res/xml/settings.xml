@@ -3,7 +3,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-            android:title="Files">
+            android:title="Storage">
             
  		<EditTextPreference
                 android:key="default_file_name"
@@ -31,6 +31,14 @@
 	            android:entryValues="@array/type_format_value"
 	            android:defaultValue="1"
 	            android:title="File format" />
+   		 
+   		 <CheckBoxPreference 
+            android:key="stop_record_quit"
+            android:summary="Stop recording when leaving the application"
+            android:title="Stop on exit" 
+            android:defaultValue="false"/>
+   		 
+   		 
    		 <CheckBoxPreference
             android:key="pref_add_limit"
             android:summary="Add time limit to recording"
@@ -45,6 +53,17 @@
             android:defaultValue="1"/>
    		 
     </PreferenceCategory>
+    
+    <PreferenceCategory
+            android:title="Misc">
+   		
+        <CheckBoxPreference 
+            android:key="use_dark_theme"
+            android:summary="Use the ugly dark theme"
+            android:title="Use dark theme" 
+            android:defaultValue="false"/>
+        
+   	</PreferenceCategory>
  
     
 </PreferenceScreen>
