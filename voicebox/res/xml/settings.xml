@@ -37,20 +37,18 @@
             android:summary="Stop recording when leaving the application"
             android:title="Stop on exit" 
             android:defaultValue="false"/>
-   		 
-   		 
-   		 <CheckBoxPreference
-            android:key="pref_add_limit"
-            android:summary="Add time limit to recording"
-            android:title="Add time limit ?"
-            android:defaultValue="false" />
-   		 
+   		    		 	 
    		<Preference 
             android:key="set_max_time"
-            android:dependency="pref_add_limit"
-            android:summary="Choose the time in seconds [TODO]"
-            android:title="Choose the time in seconds [TODO]" 
-            android:defaultValue="1"/>
+            android:summary="Max record time (in sec) 0 = unlimited"
+            android:title="Max record time" 
+            android:defaultValue="0"/>
+   		
+   		<Preference 
+            android:key="set_max_size"
+            android:summary="Choose a file size limit (in Mo) 0 = unlimited"
+            android:title="Max file size" 
+            android:defaultValue="0"/>
    		 
     </PreferenceCategory>
     
