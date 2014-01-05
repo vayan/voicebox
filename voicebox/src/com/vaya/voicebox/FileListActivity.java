@@ -12,6 +12,7 @@ import android.app.AlertDialog;
 import android.app.ListActivity;  
 import android.content.Context;
 import android.content.DialogInterface;  
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.media.MediaPlayer;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;  
+import android.widget.EditText;
 import android.widget.ListView;  
 import android.widget.TextView;  
 import android.widget.Toast;
@@ -124,17 +126,55 @@ public class FileListActivity extends ListActivity {
     
  
     protected void ListLongClick(ListView l, View v, int position, long id) {  
-    	String[] menu={"Play","Rename","Delete","Share"};
+    	String[] menu={"Rename","Delete","Share"};
+    	final String path = paths.get(position);
+    	final File file = new File(path);
     	OnClickListener listener = new DialogInterface.OnClickListener() {
     		@Override
     		public void onClick(DialogInterface dialog, int which){
     			System.out.println(""+ which);
+    			if(which == 1){
+    				file.delete();
+    				getFileDir(rootPath);
+    			}else if(which == 0){
+    				renameDialog(path);
+    				getFileDir(rootPath);
+    			}else if(which == 2){
+    				
+    			}
     		}
     	};
     	
     	new AlertDialog.Builder(FileListActivity.this).setTitle("Operater").setItems(menu,listener).show();
+    	//this.recreate();
+    	//this.finish();
+    	//startActivity(new Intent(FileListActivity.this, FileListActivity.class));
     }
     
+    
+    private void renameDialog(String path) {
+
+        final EditText inputServer = new EditText(this);
+        final String pathOld = path;
+        inputServer.setFocusable(true);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(android.R.string.dialog_alert_title)).setIcon(
+                android.R.drawable.ic_dialog_alert).setView(inputServer).setNegativeButton(
+                getString(android.R.string.cancel), null);
+        builder.setPositiveButton(getString(android.R.string.ok),
+                new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        String inputName = inputServer.getText().toString();
+                        inputName = "/sdcard/VoiceBox/"+ inputName;
+                        File oleFile = new File(pathOld); //要重命名的文件或文件夹
+                        File newFile = new File(inputName);  //重命名为zhidian1
+                        oleFile.renameTo(newFile);  //执行重命名
+                    }
+                });
+        builder.show();
+    }
     
     @Override  
     protected void onListItemClick(ListView l, View v, int position, long id) {  
