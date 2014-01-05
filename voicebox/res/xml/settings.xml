@@ -2,6 +2,14 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <PreferenceCategory android:title="Storage" >
+        <ListPreference
+            android:defaultValue="SDCARD"
+            android:entries="@array/storage_location"
+            android:entryValues="@array/storage_location_values"
+            android:key="storage_location"
+            android:summary="Choose the default storage location"
+            android:title="Storage location" />
+
         <EditTextPreference
             android:defaultValue="VoiceBox"
             android:dialogTitle="File name"
@@ -10,9 +18,9 @@
             android:title="File name" />
         <EditTextPreference
             android:defaultValue="VoiceBox"
-            android:dialogTitle="Folder Location"
+            android:dialogTitle="Folder name"
             android:key="default_folder"
-            android:summary="Change where audio files are saved"
+            android:summary="Change the name of the folder"
             android:title="Folder Location" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Audio" >

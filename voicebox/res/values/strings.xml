@@ -18,5 +18,15 @@
         <item name="AAC">6</item>
         <item name="MP4">2</item>
     </string-array>
+    
+    <string-array name="storage_location">
+        <item name="SDCARD">SD Card</item>
+        <item name="INTERNAL">Internal Storage</item>
+    </string-array>
+    
+     <string-array name="storage_location_values">
+        <item name="SDCARD">SDCARD</item>
+        <item name="INTERNAL">INTERNAL</item>
+    </string-array>
 
 </resources>
