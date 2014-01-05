@@ -33,7 +33,8 @@
             android:name="SettingsActivity"
             android:parentActivityName="MainActivity" >
         </activity>
-        <activity android:name="FileListActivity" >
+        <activity android:name="FileListActivity" 
+            android:parentActivityName="MainActivity" >
         </activity>
     </application>
 

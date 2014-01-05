@@ -11,16 +11,19 @@ import android.app.AlertDialog;
 import android.app.ListActivity;  
 import android.content.Context;
 import android.content.DialogInterface;  
+import android.content.DialogInterface.OnClickListener;
 import android.media.MediaPlayer;
 import android.os.Bundle;  
 import android.util.Log;
 import android.view.View;  
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;  
 import android.widget.ListView;  
 import android.widget.TextView;  
+import android.widget.Toast;
 
 public class FileListActivity extends ListActivity {
-	
 	
 	private String TAG = "FileListActivity";
 	ShakeInterface shake;
@@ -52,7 +55,18 @@ public class FileListActivity extends ListActivity {
         super.onCreate(savedInstanceState);  
         setContentView(R.layout.activity_filelist);  
         //tv = (TextView) this.findViewById(R.id.TextView);  
-        this.getFileDir(rootPath);  
+        this.getFileDir(rootPath); 
+        
+        getListView().setOnItemLongClickListener(new OnItemLongClickListener(){  
+            @Override  
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,  
+                    int arg2, long arg3) {  
+                // TODO Auto-generated method stub  
+                // When clicked, show a toast with the TextView text  
+            	ListLongClick((ListView)arg0, arg1, arg2, arg3);
+                return false;  
+            }
+        });  
         
         shake_phone(this);
     }  
@@ -89,7 +103,21 @@ public class FileListActivity extends ListActivity {
         }  
   
     }  
-  
+    
+ 
+    protected void ListLongClick(ListView l, View v, int position, long id) {  
+    	String[] menu={"Play","Rename","Delete","Share"};
+    	OnClickListener listener = new DialogInterface.OnClickListener() {
+    		@Override
+    		public void onClick(DialogInterface dialog, int which){
+    			System.out.println(""+ which);
+    		}
+    	};
+    	
+    	new AlertDialog.Builder(FileListActivity.this).setTitle("Operater").setItems(menu,listener).show();
+    }
+    
+    
     @Override  
     protected void onListItemClick(ListView l, View v, int position, long id) {  
         super.onListItemClick(l, v, position, id);  
