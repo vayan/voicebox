@@ -90,7 +90,7 @@ public class MainActivity extends Activity {
 		protected Long doInBackground(Long... arg0) {
 			while (true) { //just do nothing..
 				try {
-					Thread.sleep(500); //up if lag 
+					Thread.sleep(200); //up if lag 
 				} catch (InterruptedException e) {
 					Log.e(LOG_TAG, "doInBackground() Sleep failed, " + e.toString());
 					e.printStackTrace();
