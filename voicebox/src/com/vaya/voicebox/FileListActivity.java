@@ -15,7 +15,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
+import android.os.Build;
 import android.os.Bundle;  
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -29,6 +34,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class FileListActivity extends ListActivity {
+	
+	
+	NfcAdapter mNfcAdapter;
+	
+	private Uri[] mFileUris = new Uri[10];	
+	private FileUriCallback mFileUriCallback;
 	
 	private String TAG = "FileListActivity";
 	public static final String activity_title = "Recording History";
@@ -52,9 +63,27 @@ public class FileListActivity extends ListActivity {
 		public void onShake() {
 			// TODO Auto-generated method stub
 			Log.d(TAG, getfile());
+			share(getfile());
 		}
 		
 	};
+	
+	/**
+     * Callback that Android Beam file transfer calls to get
+     * files to share
+     */
+    private class FileUriCallback implements
+            NfcAdapter.CreateBeamUrisCallback {
+        public FileUriCallback() {
+        }
+        /**
+         * Create content URIs as needed to share with another device
+         */
+        @Override
+        public Uri[] createBeamUris(NfcEvent event) {
+            return mFileUris;
+        }
+    };
 	
 	public void updateTheme() {
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -65,7 +94,14 @@ public class FileListActivity extends ListActivity {
   
     @Override  
     public void onCreate(Bundle savedInstanceState) {  
-        super.onCreate(savedInstanceState);  
+        super.onCreate(savedInstanceState);          
+        
+        
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+    	
+    	mFileUriCallback = new FileUriCallback();
+        // Set the dynamic callback for URI requests.
+        mNfcAdapter.setBeamPushUrisCallback(mFileUriCallback,this);
         
         updateTheme();
 		ActionBar actionBar = getActionBar();
@@ -140,7 +176,7 @@ public class FileListActivity extends ListActivity {
     				renameDialog(path);
     				//getFileDir(rootPath);
     			}else if(which == 3){
-    				
+    				share(path);
     			}else if(which == 0){
     				mediaPlayer = new MediaPlayer();
     	        	try {
@@ -180,6 +216,29 @@ public class FileListActivity extends ListActivity {
     	//startActivity(new Intent(FileListActivity.this, FileListActivity.class));
     }
     
+    
+    private void share(String path){
+    	setTransFile(path);
+    }
+    
+    private void setTransFile(String path){
+    	/*
+         * Create a list of URIs, get a File,
+         * and set its permissions
+         */
+        //private Uri[] mFileUris = new Uri[10];
+        String transferFile = path;
+        File extDir = getExternalFilesDir(null);
+        File requestFile = new File(extDir, transferFile);
+        requestFile.setReadable(true, false);
+        // Get a URI for the File and add it to the list of URIs
+        Uri fileUri = Uri.fromFile(requestFile);
+        if (fileUri != null) {
+            mFileUris[0] = fileUri;
+        } else {
+            Log.e("My Activity", "No File URI available for file.");
+        }
+    }
     
     private void renameDialog(String path) {
 
