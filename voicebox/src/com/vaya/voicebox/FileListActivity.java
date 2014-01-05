@@ -138,7 +138,7 @@ public class FileListActivity extends ListActivity {
     				getFileDir(rootPath);
     			}else if(which == 1){
     				renameDialog(path);
-    				getFileDir(rootPath);
+    				//getFileDir(rootPath);
     			}else if(which == 3){
     				
     			}else if(which == 0){
@@ -188,10 +188,10 @@ public class FileListActivity extends ListActivity {
         inputServer.setFocusable(true);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(android.R.string.dialog_alert_title)).setIcon(
+        builder.setTitle("Rename").setIcon(
                 android.R.drawable.ic_dialog_alert).setView(inputServer).setNegativeButton(
-                getString(android.R.string.cancel), null);
-        builder.setPositiveButton(getString(android.R.string.ok),
+                "Cancel", null);
+        builder.setPositiveButton("OK",
                 new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
@@ -200,6 +200,7 @@ public class FileListActivity extends ListActivity {
                         File oleFile = new File(pathOld); //要重命名的文件或文件夹
                         File newFile = new File(inputName);  //重命名为zhidian1
                         oleFile.renameTo(newFile);  //执行重命名
+                        getFileDir(rootPath);
                     }
                 });
         builder.show();
