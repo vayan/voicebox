@@ -1,6 +1,7 @@
 package com.vaya.voicebox;
 
 import java.io.File;  
+import java.io.IOException;
 import java.util.ArrayList;  
 import java.util.List;  
 
@@ -10,6 +11,7 @@ import android.app.AlertDialog;
 import android.app.ListActivity;  
 import android.content.Context;
 import android.content.DialogInterface;  
+import android.media.MediaPlayer;
 import android.os.Bundle;  
 import android.util.Log;
 import android.view.View;  
@@ -27,10 +29,12 @@ public class FileListActivity extends ListActivity {
 	
 	
 	/** Called when the activity is first created. */  
-    private List<String> items = null;//存放名称  
-    private List<String> paths = null;//存放路径  
+    private List<String> items = null;
+    private List<String> paths = null;
     private String rootPath = "/sdcard/VoiceBox/";  
-    private TextView tv;  
+    //private TextView tv;  
+    
+    MediaPlayer mediaPlayer;
     
     
 	private class MySensorEventListener implements OnShakeListener{
@@ -47,27 +51,27 @@ public class FileListActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {  
         super.onCreate(savedInstanceState);  
         setContentView(R.layout.activity_filelist);  
-        tv = (TextView) this.findViewById(R.id.TextView);  
-        this.getFileDir(rootPath);//获取rootPath目录下的文件.  
+        //tv = (TextView) this.findViewById(R.id.TextView);  
+        this.getFileDir(rootPath);  
         
         shake_phone(this);
     }  
   
     public void getFileDir(String filePath) {  
         try{  
-            this.tv.setText("current:"+filePath);// 设置当前所在路径  
+            //this.tv.setText("current:"+filePath);
             items = new ArrayList<String>();  
             paths = new ArrayList<String>();  
             File f = new File(filePath);  
-            File[] files = f.listFiles();// 列出所有文件  
-            // 如果不是根目录,则列出返回根目录和上一目录选项  
+            File[] files = f.listFiles();  
+             
             if (!filePath.equals(rootPath)) {  
-                items.add("返回根目录");  
+                items.add("uproot");  
                 paths.add(rootPath);  
-                items.add("返回上一层目录");  
+                items.add("up level");  
                 paths.add(f.getParent());  
             }  
-            // 将所有文件存入list中  
+            
             if(files != null){  
                 int count = files.length;
                 for (int i = 0; i < count; i++) {  
@@ -95,18 +99,41 @@ public class FileListActivity extends ListActivity {
         if(file.isDirectory()){  
             this.getFileDir(path);  
         }else{  
-            new AlertDialog.Builder(this).setTitle("提示").setMessage(file.getName()+" 是一个文件！").setPositiveButton("OK", new DialogInterface.OnClickListener(){  
+        	mediaPlayer = new MediaPlayer();
+        	try {
+        		  mediaPlayer.setDataSource(path);
+        		} catch (IllegalArgumentException e) {
+        		  e.printStackTrace();
+        		} catch (IllegalStateException e) {
+        		  e.printStackTrace();
+        		} catch (IOException e) {
+        		  e.printStackTrace();
+        		}
+        		//Prepare mediaplayer
+        		try {
+        		  mediaPlayer.prepare();
+        		} catch (IllegalStateException e) {
+        		  e.printStackTrace();
+        		} catch (IOException e) {
+        		 e.printStackTrace();
+        		}
+        		//start mediaPlayer
+        		mediaPlayer.start();   
+        		
+        		 new AlertDialog.Builder(this).setTitle("Playing").setMessage(file.getName()+" is playing...").setPositiveButton("Stop", new DialogInterface.OnClickListener(){  
   
-                public void onClick(DialogInterface dialog, int which) {  
-                                          
-                }  
-                  
-            }).show();  
+        			                public void onClick(DialogInterface dialog, int which) {
+        			                	mediaPlayer.stop();
+        			                	mediaPlayer.release();
+        			                                          
+        			                }  
+        			                  
+        			            }).show(); 
         }  
     }
     
 	public void shake_phone(Context context){
-		//System.out.println("haha\n");
+	
 		this.context = context;
 		shake = new ShakeInterface(context);
 		shake.registerOnShakeListener(mySensorEventListener);
