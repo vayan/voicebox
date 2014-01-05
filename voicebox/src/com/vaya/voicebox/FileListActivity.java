@@ -7,13 +7,16 @@ import java.util.List;
 
 import com.vaya.voicebox.ShakeInterface.OnShakeListener;
   
+import android.app.ActionBar;
 import android.app.AlertDialog;  
 import android.app.ListActivity;  
 import android.content.Context;
 import android.content.DialogInterface;  
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.media.MediaPlayer;
 import android.os.Bundle;  
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;  
 import android.widget.AdapterView;
@@ -49,10 +52,24 @@ public class FileListActivity extends ListActivity {
 		}
 		
 	};
+	
+	public void updateTheme() {
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+		if (sharedPref.getBoolean("use_dark_theme", false)) setTheme(android.R.style.Theme_Holo);
+		else setTheme(android.R.style.Theme_Holo_Light);
+	}
   
     @Override  
     public void onCreate(Bundle savedInstanceState) {  
         super.onCreate(savedInstanceState);  
+        
+        updateTheme();
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setDisplayShowTitleEnabled(false);
+        
+        
         setContentView(R.layout.activity_filelist);  
         //tv = (TextView) this.findViewById(R.id.TextView);  
         this.getFileDir(rootPath); 
