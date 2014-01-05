@@ -12,6 +12,7 @@ import android.util.Log;
 public class SettingsActivity extends Activity  {
 
 	public static final String LOG_TAG = "VoiceBoxSettings";
+	public static final String activity_title = "Settings";
 
 	public void updateTheme() {
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -63,7 +64,7 @@ public class SettingsActivity extends Activity  {
 		updateTheme();
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setDisplayShowTitleEnabled(false);
+		actionBar.setTitle(activity_title);
 
 		getFragmentManager().beginTransaction()
 		.replace(android.R.id.content, new SettingsFragment())

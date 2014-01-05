@@ -29,6 +29,7 @@ import android.widget.Toast;
 public class FileListActivity extends ListActivity {
 	
 	private String TAG = "FileListActivity";
+	public static final String activity_title = "Recording History";
 	ShakeInterface shake;
 	MySensorEventListener mySensorEventListener = new MySensorEventListener();
 	Context context;
@@ -67,7 +68,7 @@ public class FileListActivity extends ListActivity {
         updateTheme();
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setDisplayShowTitleEnabled(false);
+		actionBar.setTitle(activity_title);
         
         
         setContentView(R.layout.activity_filelist);  
