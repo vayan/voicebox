@@ -2,6 +2,7 @@
 
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -99,14 +100,16 @@ public class ShakeInterface implements SensorEventListener {
    }
 
    //传感器数据变动事件
-   @Override
+   @SuppressLint("FloatMath")
+@Override
    public void onSensorChanged(SensorEvent event) {        
 	
            //如果没有开始录音的话可以监听是否有摇动事件，如果有摇动事件可以开始录音
    	//获取加速度传感器的三个参数
-   	float x = event.values[SensorManager.DATA_X];
-   	float y = event.values[SensorManager.DATA_Y];
-   	float z = event.values[SensorManager.DATA_Z];
+   	float x = event.values[0];
+   	float y = event.values[1];
+   	float z = event.values[2];
+
    	//获取当前时刻的毫秒数
    	curTime = System.currentTimeMillis();
    	if(!isRecoding){

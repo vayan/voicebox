@@ -3,11 +3,14 @@ package com.vaya.voicebox;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.DialogPreference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,8 +23,6 @@ public class SettingsActivity extends Activity  {
 
 	public static final String LOG_TAG = "VoiceBoxSettings";
 	public static final String activity_title = "Settings";
-	private TextView tv;
-	
 	public void updateTheme() {
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -79,7 +80,8 @@ public class SettingsActivity extends Activity  {
 		.commit();
 	}
 	
-	public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+	
+	/*public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
 
         Log.i("value is",""+newVal);
 
@@ -116,6 +118,6 @@ public class SettingsActivity extends Activity  {
 	       d.show();
 
 
-	    }
+	    }*/
 }
 

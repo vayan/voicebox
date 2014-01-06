@@ -38,13 +38,15 @@
             android:summary="Stop recording when leaving the application"
             android:title="Stop on exit" />
 
-        <PreferenceScreen
+        <com.vaya.voicebox.NumberPickerPreference
             android:defaultValue="0"
             android:key="set_max_time"
             android:summary="Max record time (in sec) 0 = unlimited"
-            android:title="Max record time" />
+            android:title="Max record time" 
+            
+            />
         
-        <PreferenceScreen
+        <Preference
             android:defaultValue="0"
             android:key="set_max_size"
             android:summary="Choose a file size limit (in Mo) 0 = unlimited"
