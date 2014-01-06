@@ -10,17 +10,20 @@ import com.vaya.voicebox.ShakeInterface.OnShakeListener;
 import android.app.ActionBar;
 import android.app.AlertDialog;  
 import android.app.ListActivity;  
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;  
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.media.MediaPlayer;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Bundle;  
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;  
 import android.widget.AdapterView;
@@ -28,6 +31,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;  
 import android.widget.EditText;
 import android.widget.ListView;  
+import android.widget.Toast;
 
 public class FileListActivity extends ListActivity {
 
@@ -128,14 +132,16 @@ public class FileListActivity extends ListActivity {
 
 
 	protected void ListLongClick(ListView l, View v, int position, long id) {  
-		String[] menu={"Playing","Rename","Delete","Share"};
+		String[] menu={"Playing","Rename","Delete","Share","As Ringtone"};
 		final String path = paths.get(position);
 		final File file = new File(path);
 		OnClickListener listener = new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which){
 				System.out.println(""+ which);
-				if(which == 2){
+				if(which == 4){
+					setMyRingtone(path);
+				}else if(which == 2){
 					file.delete();
 					getFileDir(rootPath);
 				}else if(which == 1){
@@ -292,4 +298,27 @@ public class FileListActivity extends ListActivity {
 
 		return "/sdcard/VoiceBox/"+lastfile;
 	}
+	
+	
+	public void setMyRingtone(String path)  
+    {   
+      File sdfile = new File(path);  
+      ContentValues values = new ContentValues();  
+      values.put(MediaStore.MediaColumns.DATA, sdfile.getAbsolutePath());  
+      values.put(MediaStore.MediaColumns.TITLE, sdfile.getName());  
+      values.put(MediaStore.MediaColumns.MIME_TYPE, "audio/*");    
+      values.put(MediaStore.Audio.Media.IS_RINGTONE, true);  
+      values.put(MediaStore.Audio.Media.IS_NOTIFICATION, false);  
+      values.put(MediaStore.Audio.Media.IS_ALARM, false);  
+      values.put(MediaStore.Audio.Media.IS_MUSIC, false);  
+       
+      Uri uri = MediaStore.Audio.Media.getContentUriForPath(sdfile.getAbsolutePath());  
+      Uri newUri = this.getContentResolver().insert(uri, values);  
+      RingtoneManager.setActualDefaultRingtoneUri(this, RingtoneManager.TYPE_RINGTONE, newUri);  
+      //Toast.makeText( getApplicationContext (),"Setting Success!£¡", Toast.LENGTH_SHORT ).show();  
+      System.out.println("setMyRingtone()");  
+    }
+	
+	
+	
 }
