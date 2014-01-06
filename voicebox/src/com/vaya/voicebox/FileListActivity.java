@@ -233,47 +233,47 @@ public class FileListActivity extends ListActivity {
 		builder.show();
 	}
 
-	//    @Override  
-	//    protected void onListItemClick(ListView l, View v, int position, long id) {  
-	//        super.onListItemClick(l, v, position, id);  
-	//        String path = paths.get(position);  
-	//        File file = new File(path);  
-	//        //
-	//        if(file.isDirectory()){  
-	//            this.getFileDir(path);  
-	//        }else{  
-	//        	mediaPlayer = new MediaPlayer();
-	//        	try {
-	//        		  mediaPlayer.setDataSource(path);
-	//        		} catch (IllegalArgumentException e) {
-	//        		  e.printStackTrace();
-	//        		} catch (IllegalStateException e) {
-	//        		  e.printStackTrace();
-	//        		} catch (IOException e) {
-	//        		  e.printStackTrace();
-	//        		}
-	//        		//Prepare mediaplayer
-	//        		try {
-	//        		  mediaPlayer.prepare();
-	//        		} catch (IllegalStateException e) {
-	//        		  e.printStackTrace();
-	//        		} catch (IOException e) {
-	//        		 e.printStackTrace();
-	//        		}
-	//        		//start mediaPlayer
-	//        		mediaPlayer.start();   
-	//        		
-	//        		 new AlertDialog.Builder(this).setTitle("Playing").setMessage(file.getName()+" is playing...").setPositiveButton("Stop", new DialogInterface.OnClickListener(){  
-	//  
-	//        			                public void onClick(DialogInterface dialog, int which) {
-	//        			                	mediaPlayer.stop();
-	//        			                	mediaPlayer.release();
-	//        			                                          
-	//        			                }  
-	//        			                  
-	//        			            }).show(); 
-	//        }  
-	//    }
+	    @Override  
+	    protected void onListItemClick(ListView l, View v, int position, long id) {  
+	        super.onListItemClick(l, v, position, id);  
+	        String path = paths.get(position);  
+	        File file = new File(path);  
+	        //
+	        if(file.isDirectory()){  
+	            this.getFileDir(path);  
+	        }else{  
+	        	mediaPlayer = new MediaPlayer();
+	        	try {
+	        		  mediaPlayer.setDataSource(path);
+	        		} catch (IllegalArgumentException e) {
+	        		  e.printStackTrace();
+	        		} catch (IllegalStateException e) {
+	        		  e.printStackTrace();
+	        		} catch (IOException e) {
+	        		  e.printStackTrace();
+	        		}
+	        		//Prepare mediaplayer
+	        		try {
+	        		  mediaPlayer.prepare();
+	        		} catch (IllegalStateException e) {
+	        		  e.printStackTrace();
+	        		} catch (IOException e) {
+	        		 e.printStackTrace();
+	        		}
+	        		//start mediaPlayer
+	        		mediaPlayer.start();   
+	        		
+	        		 new AlertDialog.Builder(this).setTitle("Playing").setMessage(file.getName()+" is playing...").setPositiveButton("Stop", new DialogInterface.OnClickListener(){  
+	  
+	        			                public void onClick(DialogInterface dialog, int which) {
+	        			                	mediaPlayer.stop();
+	        			                	mediaPlayer.release();
+	        			                                          
+	        			                }  
+	        			                  
+	        			            }).show(); 
+	        }  
+	    }
 
 	public void shake_phone(Context context){
 
