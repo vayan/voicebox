@@ -12,6 +12,7 @@ import android.app.AlertDialog;
 import android.app.ListActivity;  
 import android.content.Context;
 import android.content.DialogInterface;  
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.media.MediaPlayer;
@@ -29,12 +30,6 @@ import android.widget.EditText;
 import android.widget.ListView;  
 
 public class FileListActivity extends ListActivity {
-
-
-	NfcAdapter mNfcAdapter;
-
-	private Uri[] mFileUris = new Uri[10];	
-	private FileUriCallback mFileUriCallback;
 
 	private String TAG = "FileListActivity";
 	public static final String activity_title = "Recording History";
@@ -63,23 +58,6 @@ public class FileListActivity extends ListActivity {
 
 	};
 
-	/**
-	 * Callback that Android Beam file transfer calls to get
-	 * files to share
-	 */
-	private class FileUriCallback implements
-	NfcAdapter.CreateBeamUrisCallback {
-		public FileUriCallback() {
-		}
-		/**
-		 * Create content URIs as needed to share with another device
-		 */
-		@Override
-		public Uri[] createBeamUris(NfcEvent event) {
-			return mFileUris;
-		}
-	};
-
 	public void updateTheme() {
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -90,13 +68,6 @@ public class FileListActivity extends ListActivity {
 	@Override  
 	public void onCreate(Bundle savedInstanceState) {  
 		super.onCreate(savedInstanceState);          
-
-
-		mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-
-		mFileUriCallback = new FileUriCallback();
-		// Set the dynamic callback for URI requests.
-		mNfcAdapter.setBeamPushUrisCallback(mFileUriCallback,this);
 
 		updateTheme();
 		ActionBar actionBar = getActionBar();
@@ -222,17 +193,13 @@ public class FileListActivity extends ListActivity {
 		 * and set its permissions
 		 */
 		//private Uri[] mFileUris = new Uri[10];
-		String transferFile = path;
-		File extDir = getExternalFilesDir(null);
-		File requestFile = new File(extDir, transferFile);
-		requestFile.setReadable(true, false);
 		// Get a URI for the File and add it to the list of URIs
-		Uri fileUri = Uri.fromFile(requestFile);
-		if (fileUri != null) {
-			mFileUris[0] = fileUri;
-		} else {
-			Log.e("My Activity", "No File URI available for file.");
-		}
+		Uri fileUri = Uri.fromFile(new File(path));
+		Intent shareIntent = new Intent();
+		shareIntent.setAction(Intent.ACTION_SEND);
+		shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
+		shareIntent.setType("*/*");
+		startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.send_to)));
 	}
 
 	private void renameDialog(String path) {
