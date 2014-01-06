@@ -313,9 +313,10 @@ public class FileListActivity extends ListActivity {
       values.put(MediaStore.Audio.Media.IS_MUSIC, false);  
        
       Uri uri = MediaStore.Audio.Media.getContentUriForPath(sdfile.getAbsolutePath());  
-      Uri newUri = this.getContentResolver().insert(uri, values);  
-      RingtoneManager.setActualDefaultRingtoneUri(this, RingtoneManager.TYPE_RINGTONE, newUri);  
-      //Toast.makeText( getApplicationContext (),"Setting Success!£¡", Toast.LENGTH_SHORT ).show();  
+      Uri newUri = this.getContentResolver().insert(uri, values); 
+      System.out.println("start setRingtone");
+      RingtoneManager.setActualDefaultRingtoneUri(FileListActivity.this, RingtoneManager.TYPE_RINGTONE, newUri);  
+      Toast.makeText( getApplicationContext (),"Setting Success!£¡", Toast.LENGTH_SHORT ).show();  
       System.out.println("setMyRingtone()");  
     }
 	
