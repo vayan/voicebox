@@ -4,4 +4,6 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <dimen name="marging_left">30dp</dimen>
+<dimen name="marging_left_land">170dp</dimen>
 </resources>

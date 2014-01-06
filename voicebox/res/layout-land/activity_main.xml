@@ -24,7 +24,7 @@
         android:layout_height="wrap_content" 
         android:layout_width="wrap_content"
         android:layout_centerVertical="true"
-         android:layout_marginLeft="150dp"
+         android:layout_marginLeft="@dimen/marging_left_land"
          android:background="@null"/>
     	
 
