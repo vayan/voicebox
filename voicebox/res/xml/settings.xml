@@ -46,7 +46,7 @@
             
             />
         
-        <Preference
+        <com.vaya.voicebox.NumberPickerPreference
             android:defaultValue="0"
             android:key="set_max_size"
             android:summary="Choose a file size limit (in Mo) 0 = unlimited"
