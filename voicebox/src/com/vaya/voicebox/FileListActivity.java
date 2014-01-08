@@ -19,8 +19,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.nfc.NfcAdapter;
-import android.nfc.NfcEvent;
 import android.os.Bundle;  
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
